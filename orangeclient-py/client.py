@@ -23,6 +23,7 @@ def execute():
         for line in cmd_lines:
             line_res = os.popen(line)
             res.append(line_res.read())
+            line_res.close()
     print(res)
     return jsonify(res)
 

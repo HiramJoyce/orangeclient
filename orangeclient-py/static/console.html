@@ -31,12 +31,12 @@
             <div style="margin-left: 50px;" v-for="cmd,index in post_data.cmds" :key=index>
                 &nbsp;<button type="button" @click="deg(index)">-</button>&nbsp;<button type="button" @click="add(index)">+</button>&nbsp; #{{index+1}}
                 <br>
-                <textarea type="input" v-model="post_data.cmds[index]" style="width: 800px;min-height: 100px;"></textarea>
+                <textarea type="input" v-model="post_data.cmds[index]" style="width: 80%;min-height: 100px;"></textarea>
                 <br>
                 <hr width="500px" align="left">
             </div>
             OUTPUT: <br>
-            <textarea type="text" readonly v-model="output" style="margin-left: 50px;width: 800px;min-height: 600px;"></textarea>
+            <textarea type="text" readonly v-model="output" style="margin-left: 50px;width: 80%;min-height: 600px;"></textarea>
         </div>
         <br>
     </div>
