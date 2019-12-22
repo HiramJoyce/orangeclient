@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Pricing Test</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <script src="js/vue.js"></script>
+    <script src="js/settings.js"></script>
+    <script src="js/jquery-2.1.1.min.js"></script>
+    <script src="layer/layer.js"></script>
+    <style>
+        input {
+            margin-left: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        {{ message }}
+        <br>
+        <br>
+        <br>
+        <button type="button" @click="send">Send</button>
+        <br>
+        <br>
+        <br>
+        <div>
+            HOME:&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" v-model="post_data.home" /><br> CMDS:
+            <div style="margin-left: 50px;" v-for="cmd,index in post_data.cmds" :key=index>
+                &nbsp;<button type="button" @click="deg(index)">-</button>&nbsp;<button type="button" @click="add(index)">+</button>&nbsp; #{{index+1}}
+                <br>
+                <textarea type="input" v-model="post_data.cmds[index]" style="width: 800px;min-height: 100px;"></textarea>
+                <br>
+                <hr width="500px" align="left">
+            </div>
+            OUTPUT: <br>
+            <textarea type="text" readonly v-model="output" style="margin-left: 50px;width: 800px;min-height: 600px;"></textarea>
+        </div>
+        <br>
+    </div>
+</body>
+
+<script>
+    var vm = new Vue({
+        el: "#app",
+        data: {
+            message: "Hello Orange Shell Manager",
+            output: '',
+            post_data: {
+                "home": "/root",
+                "cmds": ["dir"]
+            }
+        },
+        methods: {
+            add: function(index) {
+                vm.post_data.cmds.splice(index, 0, [''])
+            },
+            deg: function(index) {
+                vm.post_data.cmds.splice(index, 1)
+            },
+            send: function() {
+                if (vm.inter) {
+                    clearInterval(vm.inter)
+                }
+                var tip = function() {
+                    if (vm.info == '') {
+                        vm.info = "Pricing···"
+                    } else {
+                        vm.info = ''
+                    }
+                }
+                vm.inter = setInterval(tip(), 150)
+                console.log(JSON.stringify(vm.post_data))
+                $.ajax({
+                    type: 'POST',
+                    // url: '/api/price',
+                    url: '/execute',
+                    data: {
+                        command: JSON.stringify(vm.post_data)
+                    },
+                    success: function(res) {
+                        console.log(res)
+                        vm.output = res
+                        clearInterval(vm.inter)
+                        vm.info = "Pricing Done!"
+                    },
+                    dataType: "json"
+                });
+            }
+        }
+    });
+</script>
