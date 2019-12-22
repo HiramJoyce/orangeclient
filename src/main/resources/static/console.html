@@ -31,7 +31,7 @@
             <div style="margin-left: 50px;" v-for="arr,oidx in post_data.cmds" :key=oidx>
                 &nbsp;<button type="button" @click="deg(arr,iidx,oidx)">-</button>&nbsp;<button type="button" @click="add(oidx)">+</button>&nbsp; #{{oidx+1}}
                 <span v-for="cmd,iidx in arr" :key=iidx>
-                    <input type="cmd" v-model="cmd" />
+                    <input type="cmd" v-model="arr[iidx]" />
                     <button type="button" @click="deg_inline(arr,iidx,oidx)">-</button>
                     <button type="button" @click="add_inline(arr,iidx,oidx)">+</button>
                 </span>
@@ -95,7 +95,7 @@
                     // url: '/api/price',
                     url: 'http://localhost:8080/execute',
                     data: {
-                    	command: JSON.stringify(vm.post_data)
+                        command: JSON.stringify(vm.post_data)
                     },
                     success: function(res) {
                         console.log(res)
