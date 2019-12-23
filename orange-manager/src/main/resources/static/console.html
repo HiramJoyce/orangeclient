@@ -12,7 +12,9 @@
     <style>
         input {
             margin-left: 15px;
-            width:768px;
+        }
+        div {
+            width:800px;
         }
     </style>
 </head>
@@ -28,8 +30,13 @@
         <br>
         <br>
         <div>
-            HOME:&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" v-model="post_data.home" /><br> HOST:&nbsp;&nbsp;&nbsp;&nbsp;
-            <input type="text" v-model="host" /><br> CMDS:
+            HOST:&nbsp;&nbsp;&nbsp;&nbsp;
+            <!--<input type="text" v-model="host" />-->
+            <div v-for="ip,idx in ips" :key=idx+ip>
+                <label><input @change="changeIp()" type="checkbox" name="ips" :value=ip>{{ip}}</label>
+            </div>
+            <br>
+            CMDS:
             <div style="margin-left: 50px;" v-for="cmd,index in post_data.cmds" :key=index>
                 &nbsp;<button type="button" @click="deg(index)">-</button>&nbsp;<button type="button" @click="add(index)">+</button>&nbsp; #{{index+1}}
                 <br>
@@ -57,7 +64,19 @@
             post_data: {
                 "home": "/root",
                 "cmds": ["date"]
-            }
+            },
+            ips: [],
+            select_ips:[]
+        },
+        mounted() {
+            $.ajax({
+                type: 'GET',
+                url: '/getHost',
+                success: function(res) {
+                    vm.ips = res.ips
+                },
+                dataType: "json"
+            });
         },
         methods: {
             add: function(index) {
@@ -95,6 +114,18 @@
                     },
                     dataType: "json"
                 });
+            },
+            changeIp: function () {
+                var ips = $('input:checkbox:checked')
+                vm.select_ips = []
+                $.each($('input:checkbox:checked'),function(){
+                    vm.select_ips.push($(this).val())
+                });
+//                for (ip in ips) {
+//                    vm.select_ips = []
+//                    vm.select_ips.push(ip)
+//                }
+                vm.host = vm.select_ips.join(",")
             }
         }
     });
