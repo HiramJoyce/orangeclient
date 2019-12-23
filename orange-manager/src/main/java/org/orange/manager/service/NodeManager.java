@@ -10,6 +10,7 @@ public class NodeManager {
 	public static String send(String host, String data) {
 		try {
 			// 向本机的10202端口发出客户请求
+			System.out.println("---> host : " + host);
 			Socket socket = new Socket(host, 10202);
 			// 由系统标准输入设备构造BufferedReader对象
 			// 由Socket对象得到输出流，并构造PrintWriter对象

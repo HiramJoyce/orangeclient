@@ -12,6 +12,7 @@
     <style>
         input {
             margin-left: 15px;
+            width:768px;
         }
     </style>
 </head>
@@ -27,7 +28,8 @@
         <br>
         <br>
         <div>
-            HOME:&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" v-model="post_data.home" /><br> CMDS:
+            HOME:&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" v-model="post_data.home" /><br> HOST:&nbsp;&nbsp;&nbsp;&nbsp;
+            <input type="text" v-model="host" /><br> CMDS:
             <div style="margin-left: 50px;" v-for="cmd,index in post_data.cmds" :key=index>
                 &nbsp;<button type="button" @click="deg(index)">-</button>&nbsp;<button type="button" @click="add(index)">+</button>&nbsp; #{{index+1}}
                 <br>
@@ -36,7 +38,10 @@
                 <hr width="500px" align="left">
             </div>
             OUTPUT: <br>
-            <textarea type="text" readonly v-model="output" style="margin-left: 50px;width: 80%;min-height: 600px;"></textarea>
+            <div v-for="v,k in output" :key=k>
+            {{k}}<br>
+            <textarea type="text" v-for="res,i in v" :key=i readonly v-model="v[i]" style="margin-left: 50px;width: 80%;min-height: 100px;"></textarea>
+            </div>
         </div>
         <br>
     </div>
@@ -48,10 +53,10 @@
         data: {
             message: "Hello Orange Shell Manager",
             output: '',
+            host: "192.168.0.102,192.168.0.103,192.168.231.133",
             post_data: {
                 "home": "/root",
-                "host": "192.168.0.102",
-                "cmds": ["dir"]
+                "cmds": ["date"]
             }
         },
         methods: {
@@ -79,6 +84,7 @@
                     // url: '/api/price',
                     url: '/execute',
                     data: {
+                        host: vm.host,
                         command: JSON.stringify(vm.post_data)
                     },
                     success: function(res) {
