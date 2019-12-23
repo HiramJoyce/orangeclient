@@ -82,8 +82,8 @@
                         command: JSON.stringify(vm.post_data)
                     },
                     success: function(res) {
-                        console.log(res.data)
-                        vm.output = res.data
+                        console.log(res)
+                        vm.output = res
                         clearInterval(vm.inter)
                         vm.info = "Pricing Done!"
                     },

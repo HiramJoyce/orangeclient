@@ -19,11 +19,9 @@ public class OrangeClientController {
 	}
 
 	@PostMapping("execute")
-	public JSONObject execute(String command, String host) {
+	public String execute(String command, String host) {
 		System.out.println("--->>> " + command);
-		JSONObject out = new JSONObject();
-		out.put("data", NodeManager.send(host, command));
-		return out;
+		return NodeManager.send(host, command);
 	}
 
 }

@@ -24,7 +24,11 @@ public class NodeManager {
 			// 在系统标准输出上打印读入的字符串
 			System.out.println("Client:" + data);
 			// 从Server读入一字符串，并打印到标准输出上
-			String res = is.readLine();
+			String res = "";
+			String line = null;
+			while ((line = is.readLine()) != null) {
+				res += line;
+			}
 			System.out.println("Server:" + res);
 			os.close(); // 关闭Socket输出流
 			is.close(); // 关闭Socket输入流
