@@ -19,7 +19,8 @@ def execute(message):
         cmd_lines = cmd.split('\n')
         for line in cmd_lines:
             line_res = os.popen(line)
-            res.append(line_res.read().encode('utf-8'))
+            read = line_res.read()
+            res.append(read.decode('gbk').encode('utf8'))
             line_res.close()
     print(json.dumps(res, indent=4))
     return json.dumps(res, indent=4)
