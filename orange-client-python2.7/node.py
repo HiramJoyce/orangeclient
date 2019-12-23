@@ -2,13 +2,20 @@
 
 import socket
 
-address = ('127.0.0.1', 31500)
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.connect(address)
+address = ('127.0.0.1', 10201)
+socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+socket.connect(address)
 
-data = s.recv(512)
-print 'the data received is', data
 
-s.send('hihi')
+# socket.send('hihi')
 
-s.close()
+while True:
+    try:
+        print 'start recv'
+        inString = socket.recv(1024)
+        if not inString:
+            break
+        if inString:
+            print inString
+    except:
+        break
