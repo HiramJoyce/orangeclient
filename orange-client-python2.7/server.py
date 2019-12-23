@@ -2,6 +2,11 @@
 import socket
 import json
 import os
+import platform
+
+win = False
+if platform.system() == 'Windows':
+    win = True
 
 address = ('0.0.0.0', 10202)
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -18,9 +23,9 @@ def execute(message):
     for cmd in data['cmds']:
         cmd_lines = cmd.split('\n')
         for line in cmd_lines:
-            line_res = os.popen(line)
+            line_res = os.popen(line.encode('utf8'))
             read = line_res.read()
-            res.append(read.decode('gbk').encode('utf8'))
+            res.append(read.decode('gbk').encode('utf8') if win else read)
             line_res.close()
     print(json.dumps(res, indent=4))
     return json.dumps(res, indent=4)
