@@ -7,7 +7,7 @@ import java.net.Socket;
 
 public class NodeManager {
 
-	public String send(String host, String data) {
+	public static String send(String host, String data) {
 		try {
 			// 向本机的10202端口发出客户请求
 			Socket socket = new Socket(host, 10202);
@@ -24,18 +24,23 @@ public class NodeManager {
 			// 在系统标准输出上打印读入的字符串
 			System.out.println("Client:" + data);
 			// 从Server读入一字符串，并打印到标准输出上
-			System.out.println("Server:" + is.readLine());
+			String res = is.readLine();
+			System.out.println("Server:" + res);
 			os.close(); // 关闭Socket输出流
 			is.close(); // 关闭Socket输入流
 			socket.close(); // 关闭Socket
+			return res;
 		} catch (Exception e) {
 			e.printStackTrace();// 出错，打印出错信息
 		}
-		return null;
+		return "";
 	}
 
 	public static void main(String[] args) {
-		new NodeManager().send("127.0.0.1", "{\"head\":1001}");
+		for (int i = 0; i < 1; i++) {
+			NodeManager.send("192.168.0.102", "{\r\n" + "                \"home\": \"/root\",\r\n"
+					+ "                \"cmds\": [\"ipconfig -all\"]\r\n" + "            }");
+		}
 	}
 
 }
