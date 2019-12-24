@@ -1,21 +1,25 @@
 package org.orange.manager.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
+import org.orange.manager.domain.Result;
 import org.orange.manager.entity.Host;
 import org.orange.manager.repository.HostRepository;
 import org.orange.manager.service.NodeManager;
+import org.orange.manager.util.ResultUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpRequest;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -38,32 +42,30 @@ public class OrangeManagerController {
 		System.out.println(remoteHost);
 		Optional<Host> findByIp = hostRepository.findByIp(remoteHost);
 		System.out.println(findByIp.isPresent());
-		if(!findByIp.isPresent()) {
-			hostRepository.save(new Host(System.currentTimeMillis()+(int)Math.random()*1000, remoteHost));
+		if (!findByIp.isPresent()) {
+			hostRepository.save(new Host(System.currentTimeMillis() + (int) Math.random() * 1000, remoteHost));
 		}
 		return "200";
 	}
 
 	@PostMapping("execute")
-	public JSONObject execute(String command, String host) {
+	public Result<?> execute(String command, String host) {
 
 		String[] ipArray = host.split(",");
 
-		JSONObject output = new JSONObject();
+		ConcurrentHashMap<String, JSONArray> outputConcurrentHashMap = new ConcurrentHashMap<>();
 
-		for (int i = 0; i < ipArray.length; i++) {
-			output.put(ipArray[i], JSONArray.parseArray(NodeManager.send(ipArray[i], command)));
-		}
-		return output;
+		Arrays.asList(ipArray).parallelStream().forEach(ip -> {
+			outputConcurrentHashMap.put(ip, JSONArray.parseArray(NodeManager.send(ip, command)));
+		});
+
+		return ResultUtil.success(outputConcurrentHashMap);
 	}
 
 	@GetMapping("getHost")
-	public String hostList() {
-		JSONObject result = new JSONObject();
-		List<String> ips = new ArrayList<>();
-		hostRepository.findAll().forEach(host -> ips.add(host.getIp()));
-		result.put("ips", ips);
-		return result.toJSONString();
+	public Result<?> hostList() {
+		List<Host> hosts = hostRepository.findAll();
+		return ResultUtil.success(hosts);
 	}
 
 }

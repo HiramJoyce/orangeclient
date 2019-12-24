@@ -7,6 +7,11 @@ import os
 import platform
 import sys
 
+not_register = True
+manager_host = '192.168.42.167'
+manager_port = '8080'
+print sys.argv
+
 win = False
 if platform.system() == 'Windows':
     win = True
@@ -17,11 +22,7 @@ s.bind(address)
 s.listen(5)
 
 
-def execute(message):
-    data = json.loads(message)
-    print(json.dumps(data, indent=4))
-    # data = json.loads(request.get_data())
-    # print(data)
+def execute(data):
     res = []
     for cmd in data['cmds']:
         cmd_lines = cmd.split('\n')
@@ -36,13 +37,15 @@ def execute(message):
 
 def onMessage(message, ss):
     print message
-    ss.send(execute(message))
+    data = json.loads(message)
+    print(json.dumps(data, indent=4))
+    if 'code' in data and data['code']==1002:
+        ss.send('i am alive.')
+    elif 'code' in data and data['code']==1001:
+        ss.send(execute(data))
+    else:
+        ss.send('unsupport message.')
 
-
-not_register = True
-manager_host = '192.168.42.167'
-manager_port = '8080'
-print sys.argv
 
 while not_register:
     mes = 'register to manager '+manager_host+' : '+manager_port
