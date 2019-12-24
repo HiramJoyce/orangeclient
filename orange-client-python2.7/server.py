@@ -1,8 +1,11 @@
 # server
+import time
+import urllib2
 import socket
 import json
 import os
 import platform
+import sys
 
 win = False
 if platform.system() == 'Windows':
@@ -34,6 +37,29 @@ def execute(message):
 def onMessage(message, ss):
     print message
     ss.send(execute(message))
+
+
+not_register = True
+manager_host = '192.168.42.167'
+manager_port = '8080'
+print sys.argv
+
+while not_register:
+    mes = 'register to manager '+manager_host+' : '+manager_port
+    print mes
+    try:
+        url = ''.join(['http://', manager_host,
+                       ':', manager_port, '/register'])
+        print url
+        rq = urllib2.Request(url)
+        rs = urllib2.urlopen(rq).read()
+        print rs
+        if rs == '200':
+            not_register = False
+            break
+    except Exception as identifier:
+        print 'Exception : ', identifier
+    time.sleep(5)
 
 
 while True:
