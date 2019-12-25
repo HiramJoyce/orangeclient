@@ -62,7 +62,9 @@ public class OrangeManagerController {
 		String[] ipArray = host.split(",");
 		ConcurrentHashMap<String, Result<?>> outputConcurrentHashMap = new ConcurrentHashMap<>();
 		Arrays.asList(ipArray).parallelStream().forEach(ip -> {
+			long start = System.currentTimeMillis();
 			Result<?> res = NodeManager.send(ip, command);
+			res.setMs(System.currentTimeMillis() - start);
 			outputConcurrentHashMap.put(ip, res);
 		});
 		return ResultUtil.success(outputConcurrentHashMap);

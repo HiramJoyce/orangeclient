@@ -11,9 +11,9 @@ public class Result<T> {
 
 	// 错误码
 	private Integer code;
-	
-    // 是否成功
-	private boolean success=true;
+
+	// 是否成功
+	private boolean success = true;
 
 	// 提示信息
 	private String msg;
@@ -23,6 +23,9 @@ public class Result<T> {
 
 	// 时间戳
 	private Long timestamp;
+
+	// 耗时
+	private Long ms;
 
 	public Result() {
 		this.timestamp = new Date().getTime();
@@ -38,6 +41,14 @@ public class Result<T> {
 
 	public String getMsg() {
 		return msg;
+	}
+
+	public Long getMs() {
+		return ms;
+	}
+
+	public void setMs(Long ms) {
+		this.ms = ms;
 	}
 
 	public void setMsg(String msg) {
@@ -78,5 +89,4 @@ public class Result<T> {
 				+ timestamp + "]";
 	}
 
- 
 }
