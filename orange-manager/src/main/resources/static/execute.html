@@ -3,7 +3,213 @@
 <head>
     <meta charset="UTF-8">
     <title>Execute</title>
+    <style type="text/css">
+        @import url("lib/element-ui/theme-chalk/index.css");
+        body {
+            margin: 0;
+            color: rgb(44, 44, 44);
+        }
+        .el-table th>.cell {
+            padding: 0 14px;
+        }
+        .el-table td, .el-table th {
+            padding: 3px 0;
+        }
+        .host_status {
+            margin: auto;
+            width: 10px;
+            height: 10px;
+            border-radius: 5px;
+        }
+        .host_status_1 {
+            background-color: lawngreen;
+        }
+        .host_status_0 {
+            background-color: firebrick;
+        }
+        #title {
+            padding: 0 10px;
+            height: 64px;
+            line-height: 64px;
+            border-bottom: 1px solid gainsboro;
+        }
+        .el_col {
+            padding: 0 10px; height: 100%;
+        }
+        .el_col_left {
+            border-right: 1px gainsboro dashed; height: 100%;
+        }
+        .el_col_right {
+        }
+        .el-card__body {
+            padding: 0 20px;
+        }
+        pre {
+            margin: 0;
+        }
+        .output_title {
+            font-size: 13px;
+            color: #115f39;
+        }
+        .host_group_title {
+            margin-top: 15px;
+            border-top: 1px gainsboro dashed;
+            padding-top: 10px;
+        }
+    </style>
 </head>
 <body>
+<script src="lib/vue/vue.js"></script>
+<script src="lib/element-ui/index.js"></script>
+<script src="js/jquery-2.1.1.min.js"></script>
+<div id="app">
+    <el-container>
+        <el-main style="padding: 0; height: 100%;">
+            <div id="title">Execute</div>
+            <el-row style="height: 100%;">
+                <el-col :span="10" class="el_col el_col_left">
+                    <el-button @click="send" style="font-size: 25px; color: forestgreen;" type="text"><i :class="{ 'el-icon-loading': executing, 'el-icon-video-play': !executing }"></i></el-button>
+                    <el-button style="font-size: 25px; color: #66b1ff;" type="text"><i class="el-icon-refresh-left"></i></el-button>
+                    <el-input type="textarea" :autosize="{ minRows: 4, maxRows: 8}" v-model="post_data.cmds[0]"></el-input>
+                    <div class="host_group_title">Host(s)</div>
+                    <el-table height="350" ref="multipleTable" :data="nodes" tooltip-effect="dark" style="width: 100%;" @selection-change="handleSelectionChange">
+                        <el-table-column type="selection" :selectable="checkSelectable" width="40"></el-table-column>
+                        <el-table-column width="40">
+                            <template slot-scope="scope">
+                                <div class="host_status host_status_1" v-if="scope.row.status == 1"></div>
+                                <div class="host_status host_status_0" v-if="scope.row.status == 0"></div>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="ip" label="IP"></el-table-column>
+                        <el-table-column prop="name" label="Name"></el-table-column>
+                        <el-table-column prop="hostname" label="Hostname"></el-table-column>
+                    </el-table>
+                    <div class="host_group_title">Group(s)</div>
+                    <el-table height="250" ref="multipleTable" :data="nodes" tooltip-effect="dark" style="width: 100%;" @selection-change="handleSelectionChange">
+                        <el-table-column type="selection" :selectable="checkSelectable" width="40"></el-table-column>
+                        <el-table-column width="40">
+                            <template slot-scope="scope">
+                                <div class="host_status host_status_1" v-if="scope.row.status == 1"></div>
+                                <div class="host_status host_status_0" v-if="scope.row.status == 0"></div>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="name" label="Name"></el-table-column>
+                    </el-table>
+                </el-col>
+                <el-col :span="14" class="el_col el_col_right">
+                    <el-card shadow="hover" style="margin-top: 10px; max-height: 250px; overflow: scroll;" v-for="v,k in output" :key=k class="box-card">
+                        <span class="output_title">{{k}} &nbsp; {{timeFormat(v.timestamp)}}&nbsp;Finished in {{ v.ms }} ms</span>
+                        <pre>{{ v.data }}</pre>
+                    </el-card>
+                    <!-- 下面五段重复为演示效果，应删除 -->
+                    <el-card shadow="hover" style="margin-top: 10px; max-height: 250px; overflow: scroll;" v-for="v,k in output" :key=k class="box-card">
+                        <span class="output_title">{{k}} &nbsp; {{timeFormat(v.timestamp)}}&nbsp;Finished in {{ v.ms }} ms</span>
+                        <pre>{{ v.data }}</pre>
+                    </el-card>
+                    <el-card shadow="hover" style="margin-top: 10px; max-height: 250px; overflow: scroll;" v-for="v,k in output" :key=k class="box-card">
+                        <span class="output_title">{{k}} &nbsp; {{timeFormat(v.timestamp)}}&nbsp;Finished in {{ v.ms }} ms</span>
+                        <pre>{{ v.data }}</pre>
+                    </el-card>
+                    <el-card shadow="hover" style="margin-top: 10px; max-height: 250px; overflow: scroll;" v-for="v,k in output" :key=k class="box-card">
+                        <span class="output_title">{{k}} &nbsp; {{timeFormat(v.timestamp)}}&nbsp;Finished in {{ v.ms }} ms</span>
+                        <pre>{{ v.data }}</pre>
+                    </el-card>
+                    <el-card shadow="hover" style="margin-top: 10px; max-height: 250px; overflow: scroll;" v-for="v,k in output" :key=k class="box-card">
+                        <span class="output_title">{{k}} &nbsp; {{timeFormat(v.timestamp)}}&nbsp;Finished in {{ v.ms }} ms</span>
+                        <pre>{{ v.data }}</pre>
+                    </el-card>
+                    <el-card shadow="hover" style="margin-top: 10px; max-height: 250px; overflow: scroll;" v-for="v,k in output" :key=k class="box-card">
+                        <span class="output_title">{{k}} &nbsp; {{timeFormat(v.timestamp)}}&nbsp;Finished in {{ v.ms }} ms</span>
+                        <pre>{{ v.data }}</pre>
+                    </el-card>
+                </el-col>
+            </el-row>
+        </el-main>
+    </el-container>
+</div>
+<script>
+    function dateFtt(fmt, date) {
+        var o = {
+            "M+": date.getMonth() + 1, //月份
+            "d+": date.getDate(), //日
+            "h+": date.getHours(), //小时
+            "m+": date.getMinutes(), //分
+            "s+": date.getSeconds(), //秒
+            "q+": Math.floor((date.getMonth() + 3) / 3), //季度
+            "S": date.getMilliseconds() //毫秒
+        };
+        if (/(y+)/.test(fmt))
+            fmt = fmt.replace(RegExp.$1, (date.getFullYear() + "").substr(4 - RegExp.$1.length));
+        for (var k in o)
+            if (new RegExp("(" + k + ")").test(fmt))
+                fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k])
+                    .length)));
+        return fmt;
+    }
+    var vm = new Vue({
+        el: "#app",
+        data: {
+            post_data: {
+                "code": 1001,
+                "cmds": ["hostname"]
+            },
+            nodes: [],
+            select_nodes: [],
+            executing: false,
+            multipleSelection: [],
+            hosts: '',
+            output: ''
+        },
+        mounted() {
+            $.ajax({
+                type: 'GET',
+                url: '/api/getHost',
+                success: function(res) {
+                    vm.nodes = res.data
+                    for (var i = 0; i < 5; i++) {
+                        vm.nodes.push({ip: '127.0.0.1', status: 1})
+                    }
+                },
+                dataType: "json"
+            });
+        },
+        methods: {
+            handleSelectionChange(val) {
+//                this.multipleSelection = val;
+                vm.select_nodes = []
+                for (i in val) {
+                    vm.select_nodes.push(val[i]['ip'])
+                }
+                vm.hosts = vm.select_nodes.join(",")
+            },
+            checkSelectable(row, index) {
+                return row.status == 1
+            },
+            timeFormat(value) {
+                var crtTime = new Date(value);
+                return dateFtt("yyyy-MM-dd hh:mm:ss.S", crtTime); //直接调用公共JS里面的时间类处理的办法
+            },
+            send: function() {
+                vm.executing = true
+                vm.info = "Running···"
+                $.ajax({
+                    type: 'POST',
+                    url: '/api/execute',
+                    data: {
+                        host: vm.hosts,
+                        command: JSON.stringify(vm.post_data)
+                    },
+                    success: function(res) {
+                        console.log(res)
+                        vm.output = res.data
+                        vm.info = "Cmd Done!"
+                        vm.executing = false
+                    },
+                    dataType: "json"
+                });
+            }
+        }
+    });
+</script>
 </body>
 </html>
