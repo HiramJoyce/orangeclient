@@ -11,12 +11,15 @@ public class Host {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
+	private String name;
+	private String hostname;
+	private String desc;
 	private String ip;
-	private String status;
+	private int status;
 
-	public Host(Long id, String ip) {
-		this.id = id;
+	public Host(String ip, String hostname) {
 		this.ip = ip;
+		this.hostname = hostname;
 	}
 
 	public Host() {
@@ -34,6 +37,30 @@ public class Host {
 		this.id = id;
 	}
 
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getHostname() {
+		return hostname;
+	}
+
+	public void setHostname(String hostname) {
+		this.hostname = hostname;
+	}
+
+	public String getDesc() {
+		return desc;
+	}
+
+	public void setDesc(String desc) {
+		this.desc = desc;
+	}
+
 	public String getIp() {
 		return ip;
 	}
@@ -42,17 +69,23 @@ public class Host {
 		this.ip = ip;
 	}
 
-	public String getStatus() {
+	public int getStatus() {
 		return status;
 	}
 
-	public void setStatus(String status) {
+	public void setStatus(int status) {
 		this.status = status;
 	}
 
 	@Override
 	public String toString() {
-		return "Host [id=" + id + ", ip=" + ip + ", status=" + status + "]";
+		return "Host{" +
+				"id=" + id +
+				", name='" + name + '\'' +
+				", hostname='" + hostname + '\'' +
+				", desc='" + desc + '\'' +
+				", ip='" + ip + '\'' +
+				", status='" + status + '\'' +
+				'}';
 	}
-
 }

@@ -10,6 +10,7 @@ import sys
 not_register = True
 manager_host = '192.168.42.167'
 manager_port = '8080'
+host_name = socket.gethostname()
 print sys.argv
 
 if len(sys.argv) == 2:
@@ -56,7 +57,7 @@ while not_register:
     print mes
     try:
         url = ''.join(['http://', manager_host,
-                       ':', manager_port, '/api/register'])
+                       ':', manager_port, '/api/register', '?hostname=', host_name])
         print url
         rq = urllib2.Request(url)
         rs = urllib2.urlopen(rq).read()

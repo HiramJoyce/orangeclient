@@ -19,26 +19,26 @@ public class NodeChecker implements Runnable {
 	@Override
 	public void run() {
 
-		while (enable) {
-			try {
-				hostRepository.findAll().parallelStream().forEach(host -> {
-					System.out.println("NodeChecker " + host);
-					System.out.println("NodeChecker " + host.getIp());
-					Result<?> heartbeatRes = NodeManager.heartbeat(host.getIp(),
-							JSON.toJSONString(MessageUtil.heartbeat()));
-					if (heartbeatRes.isSuccess()) {
-						System.out.println(host.getIp()+" UP   :" + heartbeatRes);
-						host.setStatus("UP");
-					} else {
-						System.out.println(host.getIp()+" DOWN : " + heartbeatRes);
-						host.setStatus("DOWN");
-					}
-					hostRepository.save(host);
-				});
-				Thread.sleep(5000);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
+//		while (enable) {
+//			try {
+//				hostRepository.findAll().parallelStream().forEach(host -> {
+//					System.out.println("NodeChecker " + host);
+//					System.out.println("NodeChecker " + host.getIp());
+//					Result<?> heartbeatRes = NodeManager.heartbeat(host.getIp(),
+//							JSON.toJSONString(MessageUtil.heartbeat()));
+//					if (heartbeatRes.isSuccess()) {
+//						System.out.println(host.getIp()+" UP   :" + heartbeatRes);
+//						host.setStatus("UP");
+//					} else {
+//						System.out.println(host.getIp()+" DOWN : " + heartbeatRes);
+//						host.setStatus("DOWN");
+//					}
+//					hostRepository.save(host);
+//				});
+//				Thread.sleep(5000);
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
+//		}
 	}
 }
