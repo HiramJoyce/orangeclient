@@ -4,10 +4,13 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.orange.manager.domain.Result;
 import org.orange.manager.util.ResultUtil;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 
 public class NodeManager {
@@ -72,10 +75,35 @@ public class NodeManager {
 			os.close(); // 关闭Socket输出流
 			is.close(); // 关闭Socket输入流
 			socket.close(); // 关闭Socket
-			StringBuilder outBuilder = new StringBuilder("");
-			JSONArray.parseArray(res).forEach(out -> {
-				outBuilder.append(out);
+
+			ArrayList<String> cmdList = new ArrayList<>();
+
+			JSON.parseObject(data).getJSONArray("cmds").forEach(lines -> {
+				System.out.println(lines);
+				String[] cmdlines = lines.toString().split("\n");
+				cmdList.addAll(Arrays.asList(cmdlines));
 			});
+
+			StringBuilder outBuilder = new StringBuilder("");
+			JSONArray resArray = JSONArray.parseArray(res);
+			for (int i = 0; i < resArray.size(); i++) {
+				outBuilder.append("[.]: ");
+				outBuilder.append(cmdList.get(i));
+				outBuilder.append("\n");
+				outBuilder.append("[x]: ");
+				String[] splitresline = resArray.get(i).toString().trim().split("\n");
+
+				for (int j = 0; j < splitresline.length; j++) {
+					if(j>0) {
+						outBuilder.append("     ");
+					}
+					outBuilder.append(splitresline[j]);
+					outBuilder.append("\n");
+				}
+
+				outBuilder.append("\n");
+			}
+
 			return ResultUtil.success(outBuilder.toString());
 		} catch (Exception e) {
 			return ResultUtil.error("Exception : " + e.getMessage());
