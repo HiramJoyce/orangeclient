@@ -27,11 +27,11 @@ class CommonConfig implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        Stream.of("1,192.168.42.197", "2,192.168.42.19").map(x -> x.split(","))
-                .forEach(tuple -> hostRepository.save(new Host(Long.valueOf(tuple[0]), tuple[1])));
-        Thread checker = new Thread(nodeChecker);
-        checker.setDaemon(true);
-        checker.setName("Node-Checker-Thread");
-        checker.start();
+//        Stream.of("1,192.168.42.197", "2,192.168.42.19").map(x -> x.split(","))
+//                .forEach(tuple -> hostRepository.save(new Host(Long.valueOf(tuple[0]), tuple[1])));
+//        Thread checker = new Thread(nodeChecker);
+//        checker.setDaemon(true);
+//        checker.setName("Node-Checker-Thread");
+//        checker.start();
     }
 }

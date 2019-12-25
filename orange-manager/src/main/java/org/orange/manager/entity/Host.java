@@ -1,7 +1,5 @@
 package org.orange.manager.entity;
 
-import lombok.Data;
-
 import javax.persistence.*;
 
 /**
@@ -9,7 +7,6 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "t_host")
-@Data
 public class Host {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
