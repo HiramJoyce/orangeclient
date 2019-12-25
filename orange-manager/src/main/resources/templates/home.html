@@ -19,14 +19,8 @@
         .el-menu-item i {
             color: #fff;
         }
-        .el-menu-item:hover {
-            background-color: "red"
-        }
-        .el-menu-item-active{
-            background: green !important;
-        }
-        .el-menu-item-not-active {
-            background-color: green;
+        .el-menu-item.is-active {
+            background-color: #152780 !important;
         }
     </style>
 </head>
@@ -37,27 +31,27 @@
     <el-container>
         <el-aside :style="{'background-color': '#1e3799', width: isCollapse ? '65px' : '200px', height: '100vh', position: 'fixed'}">
             <el-menu
+                    default-active="1"
                     @select="selectItem"
                     background-color="#1e3799"
                     text-color="#fff"
-                    active-text-color="#ffd04b"
+                    active-text-color="#00ff9c"
                     :collapse-transition=false
-                    class="el-menu-vertical-demo"
                     :collapse="isCollapse"
                     style="border-right: none">
-                <el-menu-item :class="change(1)" index="1">
+                <el-menu-item index="1" >
                     <i class="el-icon-finished"></i>
                     <span slot="title">Execute</span>
                 </el-menu-item>
-                <el-menu-item :class="change(2)" index="2">
+                <el-menu-item index="2">
                     <i class="el-icon-monitor"></i>
                     <span slot="title">Host & Group</span>
                 </el-menu-item>
-                <el-menu-item :class="change(3)" index="3">
+                <el-menu-item index="3">
                     <i class="el-icon-s-operation"></i>
                     <span slot="title">Scripts</span>
                 </el-menu-item>
-                <el-menu-item :class="change(4)" index="4">
+                <el-menu-item index="4">
                     <i class="el-icon-odometer"></i>
                     <span slot="title">Dashboard</span>
                 </el-menu-item>
@@ -88,9 +82,6 @@
             }
         },
         methods: {
-            change (index) {
-                return this.activeIndex==index?'el-menu-item-active':'el-menu-item-not-active'
-            },
             toggle () {
                 this.isCollapse = !this.isCollapse
             },
