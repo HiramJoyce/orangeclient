@@ -8,6 +8,8 @@ import java.net.Socket;
 import org.orange.manager.domain.Result;
 import org.orange.manager.util.ResultUtil;
 
+import com.alibaba.fastjson.JSONArray;
+
 public class NodeManager {
 
 	public static Result<?> heartbeat(String host, String data) {
@@ -43,7 +45,7 @@ public class NodeManager {
 		}
 	}
 
-	public static String send(String host, String data) {
+	public static Result<?> send(String host, String data) {
 		try {
 			// 向本机的10202端口发出客户请求
 			System.out.println("---> host : " + host);
@@ -70,10 +72,13 @@ public class NodeManager {
 			os.close(); // 关闭Socket输出流
 			is.close(); // 关闭Socket输入流
 			socket.close(); // 关闭Socket
-			return res;
+			StringBuilder outBuilder = new StringBuilder("");
+			JSONArray.parseArray(res).forEach(out -> {
+				outBuilder.append(out);
+			});
+			return ResultUtil.success(outBuilder.toString());
 		} catch (Exception e) {
-			e.printStackTrace();// 出错，打印出错信息
-			return "Exception : " + e.getMessage();
+			return ResultUtil.error("Exception : " + e.getMessage());
 		}
 	}
 

@@ -52,15 +52,12 @@ public class OrangeManagerController {
 
 	@PostMapping("execute")
 	public Result<?> execute(String command, String host) {
-
 		String[] ipArray = host.split(",");
-
-		ConcurrentHashMap<String, JSONArray> outputConcurrentHashMap = new ConcurrentHashMap<>();
-
+		ConcurrentHashMap<String, Result<?>> outputConcurrentHashMap = new ConcurrentHashMap<>();
 		Arrays.asList(ipArray).parallelStream().forEach(ip -> {
-			outputConcurrentHashMap.put(ip, JSONArray.parseArray(NodeManager.send(ip, command)));
+			Result<?> res = NodeManager.send(ip, command);
+			outputConcurrentHashMap.put(ip, res);
 		});
-
 		return ResultUtil.success(outputConcurrentHashMap);
 	}
 

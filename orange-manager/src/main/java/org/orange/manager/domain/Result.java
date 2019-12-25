@@ -28,14 +28,6 @@ public class Result<T> {
 		this.timestamp = new Date().getTime();
 	}
 
-	public Long getTimestamps() {
-		return timestamp;
-	}
-
-	public void setTimestamps(Long timestamps) {
-		this.timestamp = new Date().getTime();
-	}
-
 	public Integer getCode() {
 		return code;
 	}
