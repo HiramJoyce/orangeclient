@@ -45,7 +45,7 @@
             </div>
             OUTPUT: <br>
             <div v-for="v,k in output" :key=k>
-                <div style="margin-left: 50px; width: 80%;">{{k}} &nbsp; {{timeFormat(v.timestamp)}}</div> 
+                <div style="margin-left: 50px; width: 80%;">{{k}} &nbsp; {{timeFormat(v.timestamp)}}&nbsp;Finished in {{ v.ms }} ms</div> 
                 <textarea type="text" readonly v-model="v.data" style="margin-left: 50px; width: 80%; min-height: 100px;"></textarea>
             </div>
         </div>
