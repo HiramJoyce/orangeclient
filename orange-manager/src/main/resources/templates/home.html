@@ -30,6 +30,7 @@
 <div id="app">
     <el-container>
         <el-aside :style="{'background-color': '#1e3799', width: isCollapse ? '65px' : '200px', height: '100vh', position: 'fixed'}">
+            <div style="height: 70px;"><image style="width: 40px; height: 40px; margin: 12px;" src="icon.png"/></div>
             <el-menu
                     default-active="1"
                     @select="selectItem"
@@ -62,7 +63,7 @@
             </el-button>
         </el-aside>
         <el-main :style="{'margin-left': isCollapse ? '65px' : '200px', height: '100vh', padding: 0}">
-            <iframe id="iframe" style="border: none; width: 100%; height: 100%" :src="activeUrl"></iframe>
+            <iframe id="iframe" style="border: none; width: 100%; height: 99%" :src="activeUrl"></iframe>
         </el-main>
     </el-container>
 </div>
