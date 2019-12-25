@@ -22,6 +22,12 @@
         .el-menu-item:hover {
             background-color: "red"
         }
+        .el-menu-item-active{
+            background: red !important;
+        }
+        .el-menu-item-not-active {
+            background-color: green !important;
+        }
     </style>
 </head>
 <body>
@@ -39,7 +45,7 @@
                     class="el-menu-vertical-demo"
                     :collapse="isCollapse"
                     style="border-right: none">
-                <el-menu-item :style="{'background-color': activeIndex==1 ? 'red !important':'#1e3799 !important'}" index="1">
+                <el-menu-item :class="change(1)" index="1">
                     <i class="el-icon-finished"></i>
                     <span slot="title">Execute</span>
                 </el-menu-item>
@@ -82,6 +88,9 @@
             }
         },
         methods: {
+            change (index) {
+                return this.activeIndex==index?'el-menu-item-active':'el-menu-item-not-active'
+            },
             toggle () {
                 this.isCollapse = !this.isCollapse
             },
