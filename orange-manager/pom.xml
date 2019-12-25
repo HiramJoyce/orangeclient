@@ -9,7 +9,7 @@
 		<version>2.1.4.RELEASE</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.chess</groupId>
+	<groupId>org.orange</groupId>
 	<artifactId>orange-manager</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>orange-manager</name>
