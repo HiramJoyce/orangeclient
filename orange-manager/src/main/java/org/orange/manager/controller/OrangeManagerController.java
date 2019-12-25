@@ -11,6 +11,7 @@ import org.orange.manager.util.ResultUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.lang.reflect.Array;
@@ -26,7 +27,8 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * @author hiram 2019年12月20日 14:58
  */
-@RestController("/api")
+@RestController
+@RequestMapping("/api")
 public class OrangeManagerController {
 	@Autowired
 	private HostRepository hostRepository;
