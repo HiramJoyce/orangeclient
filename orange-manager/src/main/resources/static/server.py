@@ -56,7 +56,7 @@ while not_register:
     print mes
     try:
         url = ''.join(['http://', manager_host,
-                       ':', manager_port, '/register'])
+                       ':', manager_port, '/api/register'])
         print url
         rq = urllib2.Request(url)
         rs = urllib2.urlopen(rq).read()

@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * @author hiram 2019年12月20日 14:58
  */
-@RestController("/")
+@RestController("/api")
 public class OrangeManagerController {
 	@Autowired
 	private HostRepository hostRepository;

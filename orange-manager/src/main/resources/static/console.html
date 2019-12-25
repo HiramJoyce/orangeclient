@@ -78,7 +78,7 @@ div {
         mounted() {
             $.ajax({
                 type: 'GET',
-                url: '/getHost',
+                url: '/api/getHost',
                 success: function(res) {
                     vm.nodes = res.data
                 },
@@ -97,7 +97,7 @@ div {
                 console.log(JSON.stringify(vm.post_data))
                 $.ajax({
                     type: 'POST', 
-                    url: '/execute',
+                    url: '/api/execute',
                     data: {
                         host: vm.host,
                         command: JSON.stringify(vm.post_data)
