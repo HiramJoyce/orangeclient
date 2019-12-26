@@ -72,6 +72,21 @@
             border-top: 1px gainsboro dashed;
             padding-top: 10px;
         }
+        
+        .fixed {
+            position: absolute;
+            z-index: 99;
+        }
+        
+        .run {
+            top: -2px;
+            right: 80px;
+        }
+        
+        .refresh {
+            top: -2px;
+            right: 40px;
+        }
     </style>
 </head>
 
@@ -79,17 +94,37 @@
     <script src="lib/vue/vue.js"></script>
     <script src="lib/element-ui/index.js"></script>
     <script src="js/jquery-2.1.1.min.js"></script>
-    <div id="app">
-        <el-container>
-            <el-main style="padding: 0; height: 100%;">
-                <div id="title">Execute</div>
+    <el-container>
+        <el-main style="padding: 0; height: 100%;">
+            <div id="title">Execute</div>
+            <div id="app">
                 <el-row style="height: 100%;">
-                    <el-col :span="10" class="el_col el_col_left">
-                        <el-button @click="send" style="font-size: 25px; color: forestgreen;" type="text"><i :class="{ 'el-icon-loading': executing, 'el-icon-video-play': !executing }"></i>
-                        </el-button>
-                        <el-button style="font-size: 25px; color: #66b1ff;" type="text"><i class="el-icon-refresh-left"></i></el-button>
-                        <el-input type="textarea" :autosize="{ minRows: 4, maxRows: 8}" v-model="post_data.cmds[0]">
-                        </el-input>
+                    <el-col :span="10" class="el_col el_col_left" style="height:30%;">
+                        <el-row style="height: 100%;position: relative; ">
+                            <div>
+                                <el-button class="fixed run" @click="send" style="font-size: 25px; color: forestgreen;" type="text"><i :class="{ 'el-icon-loading': executing, 'el-icon-video-play': !executing }"></i>
+                                </el-button>
+                                <el-button class="fixed refresh" style="font-size: 25px; color: #66b1ff;" type="text"><i class="el-icon-refresh-left"></i></el-button>
+                                <el-input type="textarea" :autosize="{ minRows: 4, maxRows: 8}" v-model="post_data.cmds[0]">
+                                </el-input>
+                            </div>
+                        </el-row>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                         <div class="host_group_title">Host(s)</div>
                         <el-table height="350" ref="multipleTable" :data="nodes" tooltip-effect="dark" style="width: 100%;" @selection-change="handleSelectionChange">
                             <el-table-column type="selection" :selectable="checkSelectable" width="40">
@@ -125,8 +160,8 @@
                         </el-card>
                     </el-col>
                 </el-row>
-            </el-main>
-        </el-container>
+        </el-main>
+    </el-container>
     </div>
     <script>
         function dateFtt(fmt, date) {
