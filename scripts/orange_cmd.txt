@@ -2,3 +2,4 @@ C:\python27\python.exe  C:\stswork\orange\orange-web\orange-client-python2.7\ser
 top -n 1 -c -b
 date +"%Y-%m-%d %H:%M.%S"
 expect ./deploy.expect 192.168.43.19 root admin 22 192.168.43.42
+curl -O http://localhost:8080/server.py
