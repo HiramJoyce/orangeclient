@@ -14,11 +14,18 @@ expect {
 }
 
 #\r 代表回车执行
-
+expect "]*"
+send "exit\r"
+expect "]*"
 send "cd ~\r"
+expect "]*"
 send "mkdir orange\r"
+expect "]*"
 send "cd orange\r"
+expect "]*"
 send "wget http://$MANAGER_HOST:8080/server.py\r"
+expect "]*"
 send "ls\r"
+expect "]*"
 send "python server.py & \r"
 exit
