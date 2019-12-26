@@ -104,6 +104,8 @@
     <script src="lib/vue/vue.js"></script>
     <script src="lib/element-ui/index.js"></script>
     <script src="js/jquery-2.1.1.min.js"></script>
+    <script src="js/ace.js"></script>
+    <script src="js/ext-language_tools.js"></script>
     <el-container>
         <el-main style="padding: 0; height: 100%;">
             <div id="title">Execute</div>
@@ -120,7 +122,8 @@
                                 <i class="el-icon-close"></i>
                                 <!--<span>×</span>-->
                             </el-button>
-                            <el-input type="textarea" :autosize="{ minRows: 4, maxRows: 8}" v-model="post_data.cmds[0]"></el-input>
+                            <!--<el-input type="textarea" :autosize="{ minRows: 4, maxRows: 8}" v-model="post_data.cmds[0]"></el-input>-->
+                            <div style="position: relative;" id="editor"></div>
                         </el-row>
                         <div class="host_group_title">Host(s)</div>
                         <el-table height="350" ref="multipleTable" :data="nodes" tooltip-effect="dark" style="width: 100%;" @selection-change="handleSelectionChange">
@@ -180,6 +183,8 @@
                         .length)));
             return fmt;
         }
+
+        // Vue.js
         var vm = new Vue({
             el: "#app",
             data: {
@@ -223,6 +228,7 @@
                 send: function() {
                     vm.executing = true
                     vm.info = "Running···"
+                    vm.post_data.cmds[0] = editor.getValue()
                     $.ajax({
                         type: 'POST',
                         url: '/api/execute',
@@ -241,6 +247,37 @@
                 }
             }
         });
+
+        // ACE.js
+        var setCompleteData = function(data) {
+            var langTools = ace.require("ace/ext/language_tools");
+            langTools.addCompleter({
+                getCompletions: function(editor, session, pos, prefix, callback) {
+                    if (prefix.length === 0) {
+                        return callback(null, []);
+                    } else {
+                        return callback(null, data);
+                    }
+                }
+            });
+        }
+        var mydate = [
+            {meta: "show the hostname of the host", caption: "hostname", value: "hostname", score:1},
+            {meta: "show add members of the current path", caption: "ls", value: "ls", score:1},
+            {meta: "show the ifconfig info", caption: "ifconfig", value: "ifconfig", score:1},
+            {meta: "show the server current date", caption: "date", value: "date", score:1}
+        ]
+        setCompleteData(mydate)
+        var editor = ace.edit("editor");
+        editor.setTheme('ace/theme/monokai');
+        editor.setOptions({
+            enableBasicAutocompletion: true,
+            enableSnippets: true,
+            enableLiveAutocompletion: true
+        });
+        editor.resize();
+        editor.setOption("minLines", 10);
+        editor.setOption("maxLines", 20);
     </script>
 </body>
 
