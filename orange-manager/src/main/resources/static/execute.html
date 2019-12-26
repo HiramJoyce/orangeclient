@@ -221,9 +221,7 @@
                         vm.select_nodes.push(val[i]['ip'])
                     }
                     vm.hosts = vm.select_nodes.join(",")
-                    if (vm.hosts !== '') {
-                        vm.allowedRun = true
-                    }
+                    checkAllowedRun()
                 },
                 checkSelectable(row, index) {
                     return row.status == 1
@@ -258,9 +256,9 @@
             }
         });
 
+        // ACE.js
         var editor
         function loadACE() {
-            // ACE.js
             var setCompleteData = function(data) {
                 var langTools = ace.require("ace/ext/language_tools");
                 langTools.addCompleter({
@@ -290,6 +288,13 @@
             editor.resize();
             editor.setOption("minLines", 10);
             editor.setOption("maxLines", 20);
+            editor.getSession().on('change', function (e) {
+                checkAllowedRun()
+            })
+        }
+
+        function checkAllowedRun() {
+            vm.allowedRun = editor.getValue().trim() && vm.hosts.trim()
         }
     </script>
 </body>
