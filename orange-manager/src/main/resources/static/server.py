@@ -6,6 +6,7 @@ import json
 import os
 import platform
 import sys
+import commands
 
 not_register = True
 manager_host = '192.168.42.167'
@@ -27,7 +28,7 @@ s.bind(address)
 s.listen(5)
 
 
-def execute(data):
+def execute_popen(data):
     res = []
     for cmd in data['cmds']:
         cmd_lines = cmd.split('\n')
@@ -40,6 +41,18 @@ def execute(data):
     return json.dumps(res, indent=4)
 
 
+def execute_commands(data):
+    res = []
+    for cmd in data['cmds']:
+        cmd_lines = cmd.split('\n')
+        for line in cmd_lines:
+            (status, output) = commands.getstatusoutput(line.encode('utf8'))
+            print status, output
+            res.append(output.decode('gbk').encode('utf8') if win else output)
+    print(json.dumps(res, indent=4))
+    return json.dumps(res, indent=4)
+
+
 def onMessage(message, ss):
     print message
     data = json.loads(message)
@@ -47,7 +60,9 @@ def onMessage(message, ss):
     if 'code' in data and data['code'] == 1002:
         ss.send('i am alive.')
     elif 'code' in data and data['code'] == 1001:
-        ss.send(execute(data))
+        ss.send(execute_popen(data))
+    elif 'code' in data and data['code'] == 1000:
+        ss.send(execute_commands(data))
     else:
         ss.send('unsupport message.')
 
