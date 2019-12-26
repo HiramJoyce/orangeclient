@@ -72,27 +72,29 @@
             border-top: 1px gainsboro dashed;
             padding-top: 10px;
         }
-
+        
         .btn_fixed {
             position: absolute;
             z-index: 99;
             font-size: 20px;
             top: -2px;
         }
-
-        .btn_fixed_run:hover, .btn_fixed_run:focus {
+        
+        .btn_fixed_run:hover,
+        .btn_fixed_run:focus {
             color: forestgreen;
         }
-
-        .btn_fixed_refresh:hover, .btn_fixed_refresh:focus {
+        
+        .btn_fixed_refresh:hover,
+        .btn_fixed_refresh:focus {
             color: #66b1ff;
         }
-
+        
         .btn_fixed_run {
             right: 40px;
             color: forestgreen;
         }
-
+        
         .btn_fixed_refresh {
             right: 10px;
             color: #66b1ff;
@@ -107,58 +109,58 @@
     <script src="js/ace.js"></script>
     <script src="js/ext-language_tools.js"></script>
     <div id="app">
-        <el-container v-loading="pageLoading">
+        <el-container>
             <el-main style="padding: 0; height: 100%;">
                 <div id="title">Execute</div>
-                    <el-row style="height: 100%;">
-                        <el-col :span="10" class="el_col el_col_left" style="height:30%;">
-                            <el-row style="height: 100%; position: relative; margin-top: 10px;">
-                                <el-button :disabled="!allowedRun" class="btn_fixed btn_fixed_run" @click="send" type="text">
-                                    <!--<i :class="{ 'el-icon-loading': executing, 'el-icon-video-play': !executing }"></i>-->
-                                    <span v-if="executing"><i class="el-icon-loading"></i></span>
-                                    <span v-else>▶</span>
-                                </el-button>
-                                <el-button class="btn_fixed btn_fixed_refresh" @click="resetCmds()" type="text">
-                                    <i class="el-icon-close"></i>
-                                </el-button>
-                                <!--<el-input type="textarea" :autosize="{ minRows: 4, maxRows: 8}" v-model="post_data.cmds[0]"></el-input>-->
-                                <div style="position: relative;" id="editor"></div>
-                            </el-row>
-                            <div class="host_group_title">Host(s)</div>
-                            <el-table height="350" ref="multipleTable" :data="nodes" tooltip-effect="dark" style="width: 100%;" @selection-change="handleSelectionChange">
-                                <el-table-column type="selection" :selectable="checkSelectable" width="40">
-                                </el-table-column>
-                                <el-table-column width="40">
-                                    <template slot-scope="scope">
-                                        <div class="host_status host_status_1" v-if="scope.row.status == 1"></div>
-                                        <div class="host_status host_status_0" v-if="scope.row.status == 0"></div>
-                                    </template>
-                                </el-table-column>
-                                <el-table-column prop="ip" label="IP"></el-table-column>
-                                <el-table-column prop="name" label="Name"></el-table-column>
-                                <el-table-column prop="hostname" label="Hostname"></el-table-column>
-                            </el-table>
-                            <div class="host_group_title">Group(s)</div>
-                            <el-table height="250" ref="multipleTable" :data="nodes" tooltip-effect="dark" style="width: 100%;" @selection-change="handleSelectionChange">
-                                <el-table-column type="selection" :selectable="checkSelectable" width="40">
-                                </el-table-column>
-                                <el-table-column width="40">
-                                    <template slot-scope="scope">
-                                        <div class="host_status host_status_1" v-if="scope.row.status == 1"></div>
-                                        <div class="host_status host_status_0" v-if="scope.row.status == 0"></div>
-                                    </template>
-                                </el-table-column>
-                                <el-table-column prop="name" label="Name"></el-table-column>
-                            </el-table>
-                        </el-col>
-                        <el-col :span="14" class="el_col el_col_right">
-                            <el-card shadow="hover" style="margin-top: 10px; max-height: 250px; overflow: scroll;" v-for="v,k in output" :key=k class="box-card">
-                                <span class="output_title">{{k}} &nbsp; {{timeFormat(v.timestamp)}}&nbsp;Finished in
-                                    {{ v.ms }} ms</span>
-                                <pre>{{ v.data }}</pre>
-                            </el-card>
-                        </el-col>
-                    </el-row>
+                <el-row style="height: 100%;">
+                    <el-col :span="10" class="el_col el_col_left" style="height:30%;">
+                        <el-row style="height: 100%; position: relative; margin-top: 10px;">
+                            <el-button :disabled="!allowedRun" class="btn_fixed btn_fixed_run" @click="send" type="text">
+                                <!--<i :class="{ 'el-icon-loading': executing, 'el-icon-video-play': !executing }"></i>-->
+                                <span v-if="executing"><i class="el-icon-loading"></i></span>
+                                <span v-else>▶</span>
+                            </el-button>
+                            <el-button class="btn_fixed btn_fixed_refresh" @click="resetCmds()" type="text">
+                                <i class="el-icon-close"></i>
+                            </el-button>
+                            <!--<el-input type="textarea" :autosize="{ minRows: 4, maxRows: 8}" v-model="post_data.cmds[0]"></el-input>-->
+                            <div style="position: relative;" id="editor"></div>
+                        </el-row>
+                        <div class="host_group_title">Host(s)</div>
+                        <el-table height="350" ref="multipleTable" :data="nodes" tooltip-effect="dark" style="width: 100%;" @selection-change="handleSelectionChange">
+                            <el-table-column type="selection" :selectable="checkSelectable" width="40">
+                            </el-table-column>
+                            <el-table-column width="40">
+                                <template slot-scope="scope">
+                                    <div class="host_status host_status_1" v-if="scope.row.status == 1"></div>
+                                    <div class="host_status host_status_0" v-if="scope.row.status == 0"></div>
+                                </template>
+                            </el-table-column>
+                            <el-table-column prop="ip" label="IP"></el-table-column>
+                            <el-table-column prop="name" label="Name"></el-table-column>
+                            <el-table-column prop="hostname" label="Hostname"></el-table-column>
+                        </el-table>
+                        <div class="host_group_title">Group(s)</div>
+                        <el-table height="250" ref="multipleTable" :data="nodes" tooltip-effect="dark" style="width: 100%;" @selection-change="handleSelectionChange">
+                            <el-table-column type="selection" :selectable="checkSelectable" width="40">
+                            </el-table-column>
+                            <el-table-column width="40">
+                                <template slot-scope="scope">
+                                    <div class="host_status host_status_1" v-if="scope.row.status == 1"></div>
+                                    <div class="host_status host_status_0" v-if="scope.row.status == 0"></div>
+                                </template>
+                            </el-table-column>
+                            <el-table-column prop="name" label="Name"></el-table-column>
+                        </el-table>
+                    </el-col>
+                    <el-col :span="14" class="el_col el_col_right">
+                        <el-card shadow="hover" style="margin-top: 10px; max-height: 250px; overflow: scroll;" v-for="v,k in output" :key=k class="box-card">
+                            <span class="output_title">{{k}} &nbsp; {{timeFormat(v.timestamp)}}&nbsp;Finished in
+                                {{ v.ms }} ms</span>
+                            <pre>{{ v.data }}</pre>
+                        </el-card>
+                    </el-col>
+                </el-row>
             </el-main>
         </el-container>
     </div>
@@ -196,7 +198,6 @@
                 multipleSelection: [],
                 hosts: '',
                 output: '',
-                pageLoading: true,
                 allowedRun: false
             },
             mounted() {
@@ -206,8 +207,8 @@
                     success: function(res) {
                         vm.nodes = res.data
                     },
-                    complete: function () {
-                        vm.pageLoading = false
+                    complete: function() {
+                        window.parent.vm.loading = false
                         loadACE()
                     },
                     dataType: "json"
@@ -258,6 +259,7 @@
 
         // ACE.js
         var editor
+
         function loadACE() {
             var setCompleteData = function(data) {
                 var langTools = ace.require("ace/ext/language_tools");
@@ -271,12 +273,27 @@
                     }
                 });
             }
-            var myHints = [
-                {meta: "show the hostname of the host", caption: "hostname", value: "hostname", score:1},
-                {meta: "show add members of the current path", caption: "ls", value: "ls", score:1},
-                {meta: "show the ifconfig info", caption: "ifconfig", value: "ifconfig", score:1},
-                {meta: "show the server current date", caption: "date", value: "date", score:1}
-            ]
+            var myHints = [{
+                meta: "show the hostname of the host",
+                caption: "hostname",
+                value: "hostname",
+                score: 1
+            }, {
+                meta: "show add members of the current path",
+                caption: "ls",
+                value: "ls",
+                score: 1
+            }, {
+                meta: "show the ifconfig info",
+                caption: "ifconfig",
+                value: "ifconfig",
+                score: 1
+            }, {
+                meta: "show the server current date",
+                caption: "date",
+                value: "date",
+                score: 1
+            }]
             setCompleteData(myHints)
             editor = ace.edit("editor");
             editor.setTheme('ace/theme/monokai');
@@ -288,7 +305,7 @@
             editor.resize();
             editor.setOption("minLines", 10);
             editor.setOption("maxLines", 20);
-            editor.getSession().on('change', function (e) {
+            editor.getSession().on('change', function(e) {
                 checkAllowedRun()
             })
         }

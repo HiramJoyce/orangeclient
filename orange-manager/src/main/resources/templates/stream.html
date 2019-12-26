@@ -10,10 +10,12 @@
             margin: 0;
             background-color: #888;
         }
-         body,div {
+        
+        body,
+        div {
             margin: 0;
             padding: 0;
-            border:none;
+            border: none;
         }
         
         .ball-pulse {
@@ -92,12 +94,7 @@
     <script src="lib/vue/vue.js"></script>
     <script src="lib/element-ui/index.js"></script>
     <script src="js/jquery-2.1.1.min.js"></script>
-    <div id="app"
-         v-loading="loading"
-         element-loading-text="Loading..."
-         element-loading-spinner="el-icon-loading"
-         element-loading-background="rgba(0, 0, 0, 0.8)"
-         style="width: 100%;height:100%">
+    <div id="app" style="width: 100%;height:100%">
         <div style="width: 100%;height: 100vh;">
             <el-header style="width: 100%;height: 10%;background-color:#fff">Header</el-header>
             <el-container style="width: 100%;height: 90%; ">
@@ -140,7 +137,6 @@
             el: "#app",
             data: {
                 message: "Hello Orange Shell Manager123",
-                loading: true,
                 info: '',
                 output: '',
                 host: '',
@@ -159,7 +155,7 @@
                         vm.nodes = res.data
                     },
                     complete: function() {
-                        vm.loading = false
+                        window.parent.vm.loading = false
                     },
                     dataType: "json"
                 });
