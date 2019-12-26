@@ -106,12 +106,8 @@
     <script src="js/jquery-2.1.1.min.js"></script>
     <script src="js/ace.js"></script>
     <script src="js/ext-language_tools.js"></script>
-    <div id="app"
-         v-loading="pageLoading"
-         element-loading-text="Loading..."
-         element-loading-spinner="el-icon-loading"
-         element-loading-background="rgba(0, 0, 0, 0.8)">
-        <el-container>
+    <div id="app">
+        <el-container v-loading="pageLoading">
             <el-main style="padding: 0; height: 100%;">
                 <div id="title">Execute</div>
                     <el-row style="height: 100%;">
@@ -210,7 +206,7 @@
                         vm.nodes = res.data
                     },
                     complete: function () {
-                        vm.pageLoading = true
+                        vm.pageLoading = false
                         loadACE()
                     },
                     dataType: "json"
@@ -218,7 +214,7 @@
             },
             methods: {
                 handleSelectionChange(val) {
-                    //                this.multipleSelection = val;
+                    // this.multipleSelection = val;
                     vm.select_nodes = []
                     for (i in val) {
                         vm.select_nodes.push(val[i]['ip'])
@@ -230,7 +226,7 @@
                 },
                 timeFormat(value) {
                     var crtTime = new Date(value);
-                    return dateFtt("yyyy-MM-dd hh:mm:ss.S", crtTime); //直接调用公共JS里面的时间类处理的办法
+                    return dateFtt("yyyy-MM-dd hh:mm:ss.S", crtTime); // 直接调用公共JS里面的时间类处理的办法
                 },
                 send: function() {
                     vm.executing = true
