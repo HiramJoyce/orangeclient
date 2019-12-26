@@ -87,6 +87,10 @@
         .el-menu-item.is-active {
             background-color: #152780 !important;
         }
+
+        [v-cloak] {
+            display: none;
+        }
     </style>
 </head>
 
@@ -94,9 +98,9 @@
     <script src="lib/vue/vue.js"></script>
     <script src="lib/element-ui/index.js"></script>
     <script src="js/jquery-2.1.1.min.js"></script>
-    <div id="app" style="width: 100%;height:100%">
+    <div id="app" v-cloak style="width: 100%;height:100%">
         <div style="width: 100%;height: 100vh;">
-            <el-header style="width: 100%;height: 10%;background-color:#fff">Header</el-header>
+            <el-header style="width: 100%;height: 64px;background-color:#fff">Header</el-header>
             <el-container style="width: 100%;height: 90%; ">
                 <el-aside width="15%" style="background-color: #fff;">
                     <span>

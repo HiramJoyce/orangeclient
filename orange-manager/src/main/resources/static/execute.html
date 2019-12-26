@@ -99,6 +99,10 @@
             right: 10px;
             color: #66b1ff;
         }
+
+        [v-cloak] {
+            display: none;
+        }
     </style>
 </head>
 
@@ -108,7 +112,7 @@
     <script src="js/jquery-2.1.1.min.js"></script>
     <script src="js/ace.js"></script>
     <script src="js/ext-language_tools.js"></script>
-    <div id="app">
+    <div id="app" v-cloak>
         <el-container>
             <el-main style="padding: 0; height: 100%;">
                 <div id="title">Execute</div>
