@@ -7,7 +7,8 @@
     <style type="text/css">
         @import url("lib/element-ui/theme-chalk/index.css");
         body {
-            margin: 0
+            margin: 0;
+            background-color: #888;
         }
         
         .ball-pulse {
@@ -30,7 +31,7 @@
         }
         
         .ball-pulse>div {
-            background-color: #1e3799;
+            background-color: rgb(30, 55, 153);
             width: 15px;
             height: 15px;
             border-radius: 100%;
@@ -62,10 +63,14 @@
             background-color: #B3C0D1;
             color: #333;
             line-height: 60px;
+            border-bottom: 1px solid #888;
         }
         
         .el-aside {
-            color: #fff;
+            background-color: #B3C0D1;
+            color: #333;
+            line-height: 60px;
+            border-right: 1px dashed #888;
         }
         
         .el-menu-item i {
@@ -90,8 +95,22 @@
                 <div></div>
             </div>
         </div>
-        <div v-else>
-            main
+        <div v-else style="width: 100%;height: 100vh;">
+            <el-header style="width: 100%;height: 10%;background-color:#fff">Header</el-header>
+            <el-container style="width: 100%;height: 90%; ">
+                <el-aside width="15%" style="background-color: #fff;">
+                    <span>
+                        Aside</span>
+                </el-aside>
+                <el-container style="width: 100%">
+                    <el-main style="width: 100%;height: 100%;background-color: #fff;">
+                        <el-card class="box-card" style="width: 99%;height: 98%; border: 5px double #888;">
+                            Dashboard
+                        </el-card>
+                    </el-main>
+                </el-container>
+            </el-container>
+            </el-container>
         </div>
     </div>
     <script>
@@ -136,8 +155,8 @@
                     success: function(res) {
                         vm.nodes = res.data
                     },
-                    complete:function(){
-                    	vm.loading = false
+                    complete: function() {
+                        vm.loading = false
                     },
                     dataType: "json"
                 });
