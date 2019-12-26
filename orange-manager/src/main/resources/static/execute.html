@@ -106,8 +106,12 @@
     <script src="js/jquery-2.1.1.min.js"></script>
     <script src="js/ace.js"></script>
     <script src="js/ext-language_tools.js"></script>
-    <div id="app">
-        <el-container v-loading="pageLoading">
+    <div id="app"
+         v-loading="pageLoading"
+         element-loading-text="Loading..."
+         element-loading-spinner="el-icon-loading"
+         element-loading-background="rgba(0, 0, 0, 0.8)">
+        <el-container>
             <el-main style="padding: 0; height: 100%;">
                 <div id="title">Execute</div>
                     <el-row style="height: 100%;">
@@ -206,7 +210,7 @@
                         vm.nodes = res.data
                     },
                     complete: function () {
-                        vm.pageLoading = false
+                        vm.pageLoading = true
                         loadACE()
                     },
                     dataType: "json"
