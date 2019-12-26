@@ -44,6 +44,7 @@ def execute_popen(data):
 def execute_commands(data):
     res = []
     for cmd in data['cmds']:
+        print(cmd)
         cmd_lines = cmd.split('\n')
         for line in cmd_lines:
             (status, output) = commands.getstatusoutput(line.encode('utf8'))
