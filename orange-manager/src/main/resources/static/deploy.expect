@@ -15,8 +15,6 @@ expect {
 
 #\r 代表回车执行
 expect "]*"
-send "exit\r"
-expect "]*"
 send "cd ~\r"
 expect "]*"
 send "mkdir orange\r"
@@ -28,4 +26,5 @@ expect "]*"
 send "ls\r"
 expect "]*"
 send "python server.py & \r"
+expect "]*"
 exit
