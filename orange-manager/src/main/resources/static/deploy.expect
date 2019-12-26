@@ -25,6 +25,6 @@ send "wget http://$MANAGER_HOST:8080/server.py\r"
 expect "]*"
 send "ls\r"
 expect "]*"
-send "python server.py & \r"
+send "nohup python server.py $MANAGER_HOST >> server.log 2>&1 & \r"
 expect "]*"
 exit
