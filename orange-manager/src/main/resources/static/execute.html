@@ -123,32 +123,6 @@
                                 {{ v.ms }} ms</span>
                             <pre>{{ v.data }}</pre>
                         </el-card>
-                        <!-- 下面五段重复为演示效果，应删除 -->
-                        <el-card shadow="hover" style="margin-top: 10px; max-height: 250px; overflow: scroll;" v-for="v,k in output" :key=k class="box-card">
-                            <span class="output_title">{{k}} &nbsp; {{timeFormat(v.timestamp)}}&nbsp;Finished in
-                                {{ v.ms }} ms</span>
-                            <pre>{{ v.data }}</pre>
-                        </el-card>
-                        <el-card shadow="hover" style="margin-top: 10px; max-height: 250px; overflow: scroll;" v-for="v,k in output" :key=k class="box-card">
-                            <span class="output_title">{{k}} &nbsp; {{timeFormat(v.timestamp)}}&nbsp;Finished in
-                                {{ v.ms }} ms</span>
-                            <pre>{{ v.data }}</pre>
-                        </el-card>
-                        <el-card shadow="hover" style="margin-top: 10px; max-height: 250px; overflow: scroll;" v-for="v,k in output" :key=k class="box-card">
-                            <span class="output_title">{{k}} &nbsp; {{timeFormat(v.timestamp)}}&nbsp;Finished in
-                                {{ v.ms }} ms</span>
-                            <pre>{{ v.data }}</pre>
-                        </el-card>
-                        <el-card shadow="hover" style="margin-top: 10px; max-height: 250px; overflow: scroll;" v-for="v,k in output" :key=k class="box-card">
-                            <span class="output_title">{{k}} &nbsp; {{timeFormat(v.timestamp)}}&nbsp;Finished in
-                                {{ v.ms }} ms</span>
-                            <pre>{{ v.data }}</pre>
-                        </el-card>
-                        <el-card shadow="hover" style="margin-top: 10px; max-height: 250px; overflow: scroll;" v-for="v,k in output" :key=k class="box-card">
-                            <span class="output_title">{{k}} &nbsp; {{timeFormat(v.timestamp)}}&nbsp;Finished in
-                                {{ v.ms }} ms</span>
-                            <pre>{{ v.data }}</pre>
-                        </el-card>
                     </el-col>
                 </el-row>
             </el-main>
@@ -193,12 +167,6 @@
                     url: '/api/getHost',
                     success: function(res) {
                         vm.nodes = res.data
-                        for (var i = 0; i < 5; i++) {
-                            vm.nodes.push({
-                                ip: '127.0.0.1',
-                                status: 1
-                            })
-                        }
                     },
                     dataType: "json"
                 });
