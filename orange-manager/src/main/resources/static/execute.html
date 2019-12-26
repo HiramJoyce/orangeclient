@@ -118,9 +118,8 @@
                                 <span v-if="executing"><i class="el-icon-loading"></i></span>
                                 <span v-else>▶</span>
                             </el-button>
-                            <el-button class="btn_fixed btn_fixed_refresh" type="text">
+                            <el-button class="btn_fixed btn_fixed_refresh" @click="resetCmds()" type="text">
                                 <i class="el-icon-close"></i>
-                                <!--<span>×</span>-->
                             </el-button>
                             <!--<el-input type="textarea" :autosize="{ minRows: 4, maxRows: 8}" v-model="post_data.cmds[0]"></el-input>-->
                             <div style="position: relative;" id="editor"></div>
@@ -244,6 +243,9 @@
                         },
                         dataType: "json"
                     });
+                },
+                resetCmds() {
+                    editor.setValue("")
                 }
             }
         });
