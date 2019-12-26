@@ -72,20 +72,30 @@
             border-top: 1px gainsboro dashed;
             padding-top: 10px;
         }
-        
-        .fixed {
+
+        .btn_fixed {
             position: absolute;
             z-index: 99;
-        }
-        
-        .run {
+            font-size: 20px;
             top: -2px;
-            right: 80px;
         }
-        
-        .refresh {
-            top: -2px;
+
+        .btn_fixed_run:hover, .btn_fixed_run:focus {
+            color: forestgreen;
+        }
+
+        .btn_fixed_refresh:hover, .btn_fixed_refresh:focus {
+            color: #66b1ff;
+        }
+
+        .btn_fixed_run {
             right: 40px;
+            color: forestgreen;
+        }
+
+        .btn_fixed_refresh {
+            right: 10px;
+            color: #66b1ff;
         }
     </style>
 </head>
@@ -100,31 +110,18 @@
             <div id="app">
                 <el-row style="height: 100%;">
                     <el-col :span="10" class="el_col el_col_left" style="height:30%;">
-                        <el-row style="height: 100%;position: relative; ">
-                            <div>
-                                <el-button class="fixed run" @click="send" style="font-size: 25px; color: forestgreen;" type="text"><i :class="{ 'el-icon-loading': executing, 'el-icon-video-play': !executing }"></i>
-                                </el-button>
-                                <el-button class="fixed refresh" style="font-size: 25px; color: #66b1ff;" type="text"><i class="el-icon-refresh-left"></i></el-button>
-                                <el-input type="textarea" :autosize="{ minRows: 4, maxRows: 8}" v-model="post_data.cmds[0]">
-                                </el-input>
-                            </div>
+                        <el-row style="height: 100%; position: relative; margin-top: 10px;">
+                            <el-button class="btn_fixed btn_fixed_run" @click="send" type="text">
+                                <!--<i :class="{ 'el-icon-loading': executing, 'el-icon-video-play': !executing }"></i>-->
+                                <span v-if="executing"><i class="el-icon-loading"></i></span>
+                                <span v-else>▶</span>
+                            </el-button>
+                            <el-button class="btn_fixed btn_fixed_refresh" type="text">
+                                <i class="el-icon-close"></i>
+                                <!--<span>×</span>-->
+                            </el-button>
+                            <el-input type="textarea" :autosize="{ minRows: 4, maxRows: 8}" v-model="post_data.cmds[0]"></el-input>
                         </el-row>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                         <div class="host_group_title">Host(s)</div>
                         <el-table height="350" ref="multipleTable" :data="nodes" tooltip-effect="dark" style="width: 100%;" @selection-change="handleSelectionChange">
                             <el-table-column type="selection" :selectable="checkSelectable" width="40">
@@ -160,6 +157,7 @@
                         </el-card>
                     </el-col>
                 </el-row>
+            </div>
         </el-main>
     </el-container>
     </div>
