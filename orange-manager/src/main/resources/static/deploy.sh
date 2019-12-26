@@ -21,4 +21,4 @@ send "cd orange\r"
 send "wget http://$MANAGER_HOST:8080/server.py\r"
 send "ls\r"
 send "python server.py & \r"
-interact
+exit
