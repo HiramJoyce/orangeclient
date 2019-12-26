@@ -113,7 +113,7 @@
                     <el-row style="height: 100%;">
                         <el-col :span="10" class="el_col el_col_left" style="height:30%;">
                             <el-row style="height: 100%; position: relative; margin-top: 10px;">
-                                <el-button class="btn_fixed btn_fixed_run" @click="send" type="text">
+                                <el-button :disabled="!allowedRun" class="btn_fixed btn_fixed_run" @click="send" type="text">
                                     <!--<i :class="{ 'el-icon-loading': executing, 'el-icon-video-play': !executing }"></i>-->
                                     <span v-if="executing"><i class="el-icon-loading"></i></span>
                                     <span v-else>▶</span>
@@ -196,7 +196,8 @@
                 multipleSelection: [],
                 hosts: '',
                 output: '',
-                pageLoading: true
+                pageLoading: true,
+                allowedRun: false
             },
             mounted() {
                 $.ajax({
@@ -220,6 +221,9 @@
                         vm.select_nodes.push(val[i]['ip'])
                     }
                     vm.hosts = vm.select_nodes.join(",")
+                    if (vm.hosts !== '') {
+                        vm.allowedRun = true
+                    }
                 },
                 checkSelectable(row, index) {
                     return row.status == 1
