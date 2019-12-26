@@ -3,6 +3,7 @@ package org.orange.manager.service;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,7 +20,9 @@ public class NodeManager {
 		try {
 			// 向本机的10202端口发出客户请求
 			System.out.println("---> host : " + host);
-			Socket socket = new Socket(host, 10202);
+			Socket socket = new Socket();
+			socket.connect(new InetSocketAddress(host, 10202), 1000);//设置连接请求超时时间1 s
+			socket.setSoTimeout(30000);
 			// 由系统标准输入设备构造BufferedReader对象
 			// 由Socket对象得到输出流，并构造PrintWriter对象
 			PrintWriter os = new PrintWriter(socket.getOutputStream());
