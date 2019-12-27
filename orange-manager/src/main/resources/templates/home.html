@@ -65,13 +65,11 @@
                         <i class="el-icon-truck"></i>
                         <span slot="title">Stream</span>
                     </el-menu-item>
+                    <el-menu-item index="6">
+                        <i class="el-icon-document"></i>
+                        <span slot="title">Document</span>
+                    </el-menu-item>
                 </el-menu>
-                <el-button style="margin-left: 24px; font-size: 18px; position: fixed; bottom: 50px;" type="text" @click="toggle()">
-                    <div style="height: 16px; width: 16px; border-radius: 8px; background-color: black;"></div>
-                </el-button>
-                <el-button style="margin-left: 24px; font-size: 18px; position: fixed; bottom: 30px;" type="text" @click="toggle()">
-                    <div style="height: 16px; width: 16px; border-radius: 8px; background-color: white;"></div>
-                </el-button>
                 <el-button style="margin-left: 24px; font-size: 18px; position: fixed; bottom: 0; color: #fff" type="text" @click="toggle()">
                     <i :class="{ 'el-icon-arrow-right': isCollapse, 'el-icon-arrow-left': !isCollapse }"></i>
                 </el-button>
@@ -94,7 +92,8 @@
                     2: 'hostgroup.html',
                     3: 'scripts.html',
                     4: 'dashboard.html',
-                    5: 'stream'
+                    5: 'stream',
+                    6: 'scripts.html'
                 }
             },
             methods: {
