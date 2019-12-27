@@ -2,6 +2,7 @@ package org.orange.manager.websocket;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import org.orange.manager.domain.ReqTypeConstant;
 import org.orange.manager.domain.Result;
 import org.orange.manager.entity.Group;
 import org.orange.manager.entity.Host;
@@ -55,13 +56,13 @@ public class OrangeWebsocket {
         JSONObject respMsgJson = new JSONObject();
         respMsgJson.put("respType", reqType);
         switch (reqType) {
-            case 10001: // 请求hosts
+            case ReqTypeConstant.QUERY_HOSTS: // 请求hosts
                 handle10001(respMsgJson, session);
                 break;
-            case 10002: // 请求groups
+            case ReqTypeConstant.QUERY_GROUPS: // 请求groups
                 handle10002(respMsgJson, session);
                 break;
-            case 10003: // 执行命令
+            case ReqTypeConstant.EXECUTE_CMDS: // 执行命令
                 handle10003(respMsgJson, reqMsgJson, session);
                 break;
             default:
