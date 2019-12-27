@@ -222,7 +222,7 @@
                         <div id="editor"></div>
                     </el-row>
                     <div class="host_group_title">Host(s)</div>
-                    <el-table height="350" :data="hostNodes" @selection-change="handleHostSelectionChange">
+                    <el-table :height="hostNodes.length > 13 ? 360 : (hostNodes.length+1)*24" :data="hostNodes" @selection-change="handleHostSelectionChange">
                         <el-table-column type="selection" :selectable="checkSelectable" width="40"></el-table-column>
                         <el-table-column width="40">
                             <template slot-scope="scope">
@@ -235,10 +235,8 @@
                         <el-table-column prop="hostname" label="Hostname"></el-table-column>
                     </el-table>
                     <div class="host_group_title">Group(s)</div>
-                    <el-table height="250" :data="groupNodes" style="width: 100%;"
-                              @selection-change="handleGroupSelectionChange">
-                        <el-table-column type="selection" :selectable="checkSelectable" width="40">
-                        </el-table-column>
+                    <el-table :data="groupNodes" @selection-change="handleGroupSelectionChange">
+                        <el-table-column type="selection" :selectable="checkSelectable" width="40"></el-table-column>
                         <el-table-column width="40">
                             <template slot-scope="scope">
                                 <div class="host_status host_status_1" v-if="scope.row.status == 1"></div>
@@ -325,12 +323,8 @@
                 vm.groupNodes = respMsgJson.data
                 break
             case 10003: // 执行命令
-                if (respMsgJson.hosts) {
-                    vm.hostsOutput = respMsgJson.hosts
-                }
-                if (respMsgJson.groups) {
-                    vm.groupsOutput = respMsgJson.groups
-                }
+                vm.hostsOutput = respMsgJson.hosts ? respMsgJson.hosts : []
+                vm.groupsOutput = respMsgJson.groups ? respMsgJson.groups : []
                 break
             default:
                 console.log(e)
