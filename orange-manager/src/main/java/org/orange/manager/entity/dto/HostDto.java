@@ -1,20 +1,23 @@
-package org.orange.manager.entity;
+package org.orange.manager.entity.dto;
 
-import org.orange.manager.entity.dto.HostDto;
+import javax.persistence.*;
+import java.util.List;
 
 /**
- * @author hiram 2019年12月23日 22:22
+ * @author hiram 2019年12月27日 10:53
  */
-public class Host {
+@Entity
+@Table(name = "t_host")
+public class HostDto {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String ip;
     private String hostname;
     private String name;
     private String desc;
-    private int status;
-
-    public Host() {
-    }
+    @ManyToMany(mappedBy = "hostDtos")
+    private List<GroupDto> groupDtos;
 
     public Long getId() {
         return id;
@@ -56,33 +59,22 @@ public class Host {
         this.desc = desc;
     }
 
-    public int getStatus() {
-        return status;
+    public List<GroupDto> getGroupDtos() {
+        return groupDtos;
     }
 
-    public void setStatus(int status) {
-        this.status = status;
-    }
-
-    public static Host fromDto(HostDto hostDto) {
-        Host host = new Host();
-        host.setId(hostDto.getId());
-        host.setIp(hostDto.getIp());
-        host.setHostname(hostDto.getHostname());
-        host.setName(hostDto.getName());
-        host.setDesc(hostDto.getDesc());
-        return host;
+    public void setGroupDtos(List<GroupDto> groupDtos) {
+        this.groupDtos = groupDtos;
     }
 
     @Override
     public String toString() {
-        return "Host{" +
+        return "HostDto{" +
                 "id=" + id +
                 ", ip='" + ip + '\'' +
                 ", hostname='" + hostname + '\'' +
                 ", name='" + name + '\'' +
                 ", desc='" + desc + '\'' +
-                ", status=" + status +
                 '}';
     }
 }

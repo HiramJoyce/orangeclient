@@ -49,10 +49,15 @@
         
         .el_col_left {
             border-right: 1px gainsboro dashed;
-            height: 100%;
+            height: calc(100vh - 65px);
+            overflow: scroll;
         }
         
-        .el_col_right {}
+        .el_col_right {
+            height: calc(100vh - 65px);
+            overflow: scroll;
+            padding-bottom: 10px;
+        }
         
         .el-card__body {
             padding: 0 20px;
@@ -64,7 +69,12 @@
         
         .output_title {
             font-size: 13px;
-            color: #115f39;
+            color: forestgreen;
+        }
+
+        .output_title_inner {
+            font-size: 11px;
+            color: forestgreen;
         }
         
         .host_group_title {
@@ -103,6 +113,18 @@
         [v-cloak] {
             display: none;
         }
+
+        .el-table--enable-row-transition .el-table__body td {
+            padding: 0;
+        }
+
+        .smallTable .el-table td, .el-table th {
+            padding: 0;
+        }
+
+        .el-card__body {
+            padding: 0;
+        }
     </style>
 </head>
 
@@ -115,10 +137,18 @@
     <div id="app" v-cloak>
         <el-container>
             <el-main style="padding: 0; height: 100%;">
-                <div id="title">Execute</div>
+                <div id="title">
+                    <span>Execute</span>
+                        <el-button style="font-size: 18px; position: fixed; top: 0; right: 64px; padding: 22px 0;" type="text" @click="changeTheme('black')">
+                            <div :style="{border: theme=='white' ? '2px solid rgb(235, 238, 244)' : '2px solid rgb(31, 31, 31)'}" style="height: 16px; width: 32px; background-color: rgb(31, 31, 31);"></div>
+                        </el-button>
+                        <el-button style="font-size: 18px; position: fixed; top: 0; right: 32px; padding: 22px 0;" type="text" @click="changeTheme('white')">
+                            <div :style="{border: theme=='black' ? '2px solid rgb(31, 31, 31)' : '2px solid rgb(235, 238, 244)'}" style="height: 16px; width: 32px; background-color: rgb(235, 238, 244);"></div>
+                        </el-button>
+                </div>
                 <el-row style="height: 100%;">
-                    <el-col :span="10" class="el_col el_col_left" style="height:30%;">
-                        <el-row style="height: 100%; position: relative; margin-top: 10px;">
+                    <el-col :span="10" class="el_col el_col_left">
+                        <el-row style="position: relative; margin-top: 11px;">
                             <el-button :disabled="!allowedRun" class="btn_fixed btn_fixed_run" @click="send" type="text">
                                 <!--<i :class="{ 'el-icon-loading': executing, 'el-icon-video-play': !executing }"></i>-->
                                 <span v-if="executing"><i class="el-icon-loading"></i></span>
@@ -128,12 +158,11 @@
                                 <i class="el-icon-close"></i>
                             </el-button>
                             <!--<el-input type="textarea" :autosize="{ minRows: 4, maxRows: 8}" v-model="post_data.cmds[0]"></el-input>-->
-                            <div style="position: relative;" id="editor"></div>
+                            <div style="position: relative; border-radius: 4px;" id="editor"></div>
                         </el-row>
                         <div class="host_group_title">Host(s)</div>
-                        <el-table height="350" ref="multipleTable" :data="nodes" tooltip-effect="dark" style="width: 100%;" @selection-change="handleSelectionChange">
-                            <el-table-column type="selection" :selectable="checkSelectable" width="40">
-                            </el-table-column>
+                        <el-table height="350" ref="multipleTable" :data="hostNodes" tooltip-effect="dark" style="width: 100%;" @selection-change="handleHostSelectionChange">
+                            <el-table-column type="selection" :selectable="checkSelectable" width="40"></el-table-column>
                             <el-table-column width="40">
                                 <template slot-scope="scope">
                                     <div class="host_status host_status_1" v-if="scope.row.status == 1"></div>
@@ -145,7 +174,7 @@
                             <el-table-column prop="hostname" label="Hostname"></el-table-column>
                         </el-table>
                         <div class="host_group_title">Group(s)</div>
-                        <el-table height="250" ref="multipleTable" :data="nodes" tooltip-effect="dark" style="width: 100%;" @selection-change="handleSelectionChange">
+                        <el-table height="250" ref="multipleTable" :data="groupNodes" tooltip-effect="dark" style="width: 100%;" @selection-change="handleGroupSelectionChange">
                             <el-table-column type="selection" :selectable="checkSelectable" width="40">
                             </el-table-column>
                             <el-table-column width="40">
@@ -155,13 +184,42 @@
                                 </template>
                             </el-table-column>
                             <el-table-column prop="name" label="Name"></el-table-column>
+                            <el-table-column type="expand" style="padding: 0;">
+                                <template slot-scope="hosts">
+                                    <el-table class="smallTable" ref="multipleTable" :data="hosts.row.hosts" tooltip-effect="dark" style="width: 100%;">
+                                        <el-table-column width="40"></el-table-column>
+                                        <el-table-column width="40"></el-table-column>
+                                        <el-table-column width="40">
+                                            <template slot-scope="scope">
+                                                <div class="host_status host_status_1" v-if="scope.row.status == 1"></div>
+                                                <div class="host_status host_status_0" v-if="scope.row.status == 0"></div>
+                                            </template>
+                                        </el-table-column>
+                                        <el-table-column prop="ip" label="IP"></el-table-column>
+                                        <el-table-column prop="name" label="Name"></el-table-column>
+                                        <el-table-column prop="hostname" label="Hostname"></el-table-column>
+                                    </el-table>
+                                </template>
+                            </el-table-column>
                         </el-table>
                     </el-col>
                     <el-col :span="14" class="el_col el_col_right">
-                        <el-card shadow="hover" style="margin-top: 10px; max-height: 250px; overflow: scroll;" v-for="v,k in output" :key=k class="box-card">
-                            <span class="output_title">{{k}} &nbsp; {{timeFormat(v.timestamp)}}&nbsp;Finished in
-                                {{ v.ms }} ms</span>
-                            <pre>{{ v.data }}</pre>
+                        <el-card :style="{'background-color': theme=='white'? 'white' : 'rgb(39, 39, 34)'}" shadow="hover" style="margin-top: 10px; max-height: 250px; overflow: scroll;" v-for="host,index1 in hostsOutput" :key=index1 class="box-card">
+                            <div :style="{'background-color': theme=='white'? 'white' : 'rgb(39, 39, 34)'}" style="position: sticky; top: 0; border-bottom: 1px dashed rgb(235, 238, 244); padding: 0 20px; border-top-left-radius: 4px; border-top-right-radius: 4px;">
+                                <span class="output_title"><b>Host: {{ host.ip }} &nbsp; Finished in {{ host.ms }} ms</b></span>
+                            </div>
+                            <pre :style="{color: theme=='white'? 'black' : 'rgb(232, 232, 226)'}" style="padding: 2px 20px;">{{ host.result.trim() }}</pre>
+                        </el-card>
+                        <el-card :style="{'background-color': theme=='white'? 'white' : 'rgb(39, 39, 34)'}" shadow="hover" style="background-color: rgb(39, 39, 34); margin-top: 10px;" v-for="group,index2 in groupsOutput" :key=index2+100 class="box-card">
+                            <div :style="{'background-color': theme=='white'? 'white' : 'rgb(39, 39, 34)'}" style="position: sticky; top: 0; padding: 0 20px;">
+                                <span class="output_title"><b>Group: {{ group.name }} &nbsp; Finished in {{ group.ms }} ms</b></span>
+                            </div>
+                            <el-card :style="{'background-color': theme=='white'? 'white' : 'rgb(39, 39, 34)'}" shadow="hover" style="border-radius: 0; max-height: 250px; border: none; overflow: scroll; border-top: 1px solid rgb(235, 238, 244);" v-for="host2,index3 in group.hosts" :key=index3+200 class="box-card">
+                                <div :style="{'background-color': theme=='white'? 'white' : 'rgb(39, 39, 34)'}" style="position: sticky; top: 0; border-bottom: 1px dashed rgb(235, 238, 244); padding: 0 20px;">
+                                    <span class="output_title_inner"><b>Host: {{ host2.ip }} &nbsp; Finished in {{ host2.ms }} ms</b></span>
+                                </div>
+                                <pre :style="{color: theme=='white'? 'black' : 'rgb(232, 232, 226)'}" style="padding: 2px 20px;">{{ host2.result.trim() }}</pre>
+                            </el-card>
                         </el-card>
                     </el-col>
                 </el-row>
@@ -169,94 +227,147 @@
         </el-container>
     </div>
     <script>
-        function dateFtt(fmt, date) {
-            var o = {
-                "M+": date.getMonth() + 1, //月份
-                "d+": date.getDate(), //日
-                "h+": date.getHours(), //小时
-                "m+": date.getMinutes(), //分
-                "s+": date.getSeconds(), //秒
-                "q+": Math.floor((date.getMonth() + 3) / 3), //季度
-                "S": date.getMilliseconds() //毫秒
-            };
-            if (/(y+)/.test(fmt))
-                fmt = fmt.replace(RegExp.$1, (date.getFullYear() + "").substr(4 - RegExp.$1.length));
-            for (var k in o)
-                if (new RegExp("(" + k + ")").test(fmt))
-                    fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k])
-                        .length)));
-            return fmt;
+        var webSocket
+        function initWebSocket() {
+            webSocket.onopen = webSocketOpen;
+            webSocket.onmessage = webSocketMessage;
+            webSocket.onclose = webSocketClose;
+            webSocket.onerror = webSocketError;
+        }
+        function webSocketOpen() {//打开
+            console.log("WebSocket连接成功")
+            let getHosts = {
+                reqType: 10001  // 请求hosts
+            }
+            webSocket.send(JSON.stringify(getHosts))
+            let getGroups = {
+                reqType: 10002  // 请求groups
+            }
+            webSocket.send(JSON.stringify(getGroups))
+        }
+        function webSocketMessage(e) { //数据接收
+            let respMsgJson = JSON.parse(e.data);
+            console.log(respMsgJson)
+            switch (respMsgJson['respType']) {
+                case 10001:
+                    vm.hostNodes = respMsgJson.data
+                    break
+                case 10002:
+                    vm.groupNodes = respMsgJson.data
+                    break
+                case 10003:
+                    if (respMsgJson.hosts) {
+                        vm.hostsOutput = respMsgJson.hosts
+                    }
+                    if (respMsgJson.groups) {
+                        vm.groupsOutput = respMsgJson.groups
+                    }
+                    console.log(respMsgJson)
+                    break
+                default:
+                    console.log(e)
+                    break
+            }
+        }
+        function webSocketClose() {  //关闭
+            console.log("WebSocket关闭");
+        }
+        function webSocketError() {  //失败
+            console.log("WebSocket连接失败");
         }
 
         // Vue.js
         var vm = new Vue({
             el: "#app",
             data: {
-                post_data: {
-                    "code": 1000,
-                    "cmds": ["hostname"]
-                },
-                nodes: [],
-                select_nodes: [],
+                hostNodes: [],
+                selectHostNodes: [],
+                groupNodes: [],
+                selectGroupNodes: [],
                 executing: false,
                 multipleSelection: [],
                 hosts: '',
-                output: '',
-                allowedRun: false
+                hostsOutput: [],
+                groupsOutput: [],
+                allowedRun: false,
+                theme: 'white'
             },
             mounted() {
-                $.ajax({
-                    type: 'GET',
-                    url: '/api/getHost',
-                    success: function(res) {
-                        vm.nodes = res.data
-                    },
-                    complete: function() {
-                        window.parent.vm.loading = false
-                        loadACE()
-                    },
-                    dataType: "json"
-                });
+                loadACE()
+                window.parent.vm.loading = false
+            },
+            created() {
+                if ('WebSocket' in window) {
+                    webSocket = new WebSocket("ws://localhost:8080/orange");
+                    initWebSocket();
+                    console.log('Support webSocket')
+                } else {
+                    console.log('Not support webSocket')
+                }
             },
             methods: {
-                handleSelectionChange(val) {
+                handleHostSelectionChange(val) {
                     // this.multipleSelection = val;
-                    vm.select_nodes = []
-                    for (i in val) {
-                        vm.select_nodes.push(val[i]['ip'])
-                    }
-                    vm.hosts = vm.select_nodes.join(",")
+                    vm.selectHostNodes = val
+//                    for (i in val) {
+//                        vm.selectHostNodes.push(val[i]['ip'])
+//                    }
+//                    vm.hosts = vm.selectHostNodes.join(",")
+                    console.log(vm.selectHostNodes)
+                    checkAllowedRun()
+                },
+                handleGroupSelectionChange(val) {
+                    // this.multipleSelection = val;
+                    vm.selectGroupNodes = val
+//                    for (i in val) {
+//                        vm.selectHostNodes.push(val[i]['ip'])
+//                    }
+//                    vm.hosts = vm.selectHostNodes.join(",")
+                    console.log(vm.selectGroupNodes)
                     checkAllowedRun()
                 },
                 checkSelectable(row, index) {
                     return row.status == 1
                 },
-                timeFormat(value) {
-                    var crtTime = new Date(value);
-                    return dateFtt("yyyy-MM-dd hh:mm:ss.S", crtTime); // 直接调用公共JS里面的时间类处理的办法
-                },
                 send: function() {
-                    vm.executing = true
-                    vm.info = "Running···"
-                    vm.post_data.cmds[0] = editor.getValue()
-                    $.ajax({
-                        type: 'POST',
-                        url: '/api/execute',
-                        data: {
-                            host: vm.hosts,
-                            command: JSON.stringify(vm.post_data)
+                    let data = {
+                        reqType: 10003,
+                        target: {
+                            hosts: vm.selectHostNodes,
+                            groups: vm.selectGroupNodes
                         },
-                        success: function(res) {
-                            console.log(res)
-                            vm.output = res.data
-                            vm.info = "Cmd Done!"
-                            vm.executing = false
-                        },
-                        dataType: "json"
-                    });
+                        commands: {
+                            "code": 1000,
+                            "cmds": [editor.getValue()]
+                        }
+                    }
+                    webSocket.send(JSON.stringify(data))
+//                    vm.executing = true
+//                    vm.info = "Running···"
+//                    vm.post_data.cmds[0] = editor.getValue()
+//                    $.ajax({
+//                        type: 'POST',
+//                        url: '/api/execute',
+//                        data: {
+//                            host: vm.hosts,
+//                            command: JSON.stringify(vm.post_data)
+//                        },
+//                        success: function(res) {
+//                            console.log(res)
+//                            vm.output = res.data
+//                            vm.info = "Cmd Done!"
+//                            vm.executing = false
+//                        },
+//                        dataType: "json"
+//                    });
                 },
                 resetCmds() {
                     editor.setValue("")
+                },
+                changeTheme(theme) {
+                    console.log("Change theme to : " + theme)
+                    this.theme = theme
+                    editor.setTheme(theme == 'white' ? 'ace/theme/xcode' : 'ace/theme/monokai');
                 }
             }
         });
@@ -300,7 +411,7 @@
             }]
             setCompleteData(myHints)
             editor = ace.edit("editor");
-            editor.setTheme('ace/theme/monokai');
+            editor.setTheme('ace/theme/xcode');
             editor.setOptions({
                 enableBasicAutocompletion: true,
                 enableSnippets: true,
@@ -315,7 +426,7 @@
         }
 
         function checkAllowedRun() {
-            vm.allowedRun = editor.getValue().trim() && vm.hosts.trim()
+            vm.allowedRun = editor.getValue().trim() && (vm.selectHostNodes.length > 0 || vm.selectGroupNodes.length > 0)
         }
     </script>
 </body>

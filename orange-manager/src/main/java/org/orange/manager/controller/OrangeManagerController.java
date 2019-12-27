@@ -5,12 +5,17 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import org.orange.manager.domain.Result;
+import org.orange.manager.entity.Group;
 import org.orange.manager.entity.Host;
+import org.orange.manager.entity.dto.GroupDto;
+import org.orange.manager.entity.dto.HostDto;
+import org.orange.manager.repository.GroupRepository;
 import org.orange.manager.repository.HostRepository;
 import org.orange.manager.service.NodeManager;
 import org.orange.manager.util.MessageUtil;
 import org.orange.manager.util.ResultUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,62 +38,103 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/api")
 public class OrangeManagerController {
-	@Autowired
-	private HostRepository hostRepository;
+	private final HostRepository hostRepository;
+    private final GroupRepository groupRepository;
 
-	@GetMapping("hello")
+    @Autowired
+    public OrangeManagerController(HostRepository hostRepository, GroupRepository groupRepository) {
+        this.hostRepository = hostRepository;
+        this.groupRepository = groupRepository;
+    }
+
+    @GetMapping("hello")
 	public String hello() {
-		return "Hello Orange!";
+//        GroupDto groupDto = new GroupDto();
+//        groupDto.setName("hahaha3");
+//        HostDto hostDto = new HostDto();
+//        hostDto.setId(7L);
+//        HostDto hostDto2 = new HostDto();
+//        hostDto2.setId(5L);
+//        groupDto.setHostDtos(Arrays.asList(hostDto, hostDto2));
+//        groupRepository.save(groupDto);
+        return "Hello Orange!";
 	}
 
 	@GetMapping("register")
 	public String register(HttpServletRequest req, String hostname) {
 		String remoteHostIp = req.getRemoteHost();
 		System.out.println(remoteHostIp);
-		Optional<Host> findByIp = hostRepository.findByIp(remoteHostIp);
+		Optional<HostDto> findByIp = hostRepository.findByIp(remoteHostIp);
 		System.out.println(findByIp.isPresent());
 		if (!findByIp.isPresent()) {
-			hostRepository.save(new Host(remoteHostIp, hostname));
+            HostDto hostDto = new HostDto();
+            hostDto.setIp(remoteHostIp);
+            hostDto.setHostname(hostname);
+            hostRepository.save(hostDto);
 		} else {
-			Host host = findByIp.get();
-			host.setHostname(hostname);
-			hostRepository.save(host);
+            HostDto hostDto = findByIp.get();
+            hostDto.setHostname(hostname);
+			hostRepository.save(hostDto);
 		}
 		return "200";
 	}
 
-	@PostMapping("execute")
-	public Result<?> execute(String command, String host) {
-		String[] ipArray = host.split(",");
-		ConcurrentHashMap<String, Result<?>> outputConcurrentHashMap = new ConcurrentHashMap<>();
-		Arrays.asList(ipArray).parallelStream().forEach(ip -> {
-			long start = System.currentTimeMillis();
-			Result<?> res = NodeManager.send(ip, command);
-			res.setMs(System.currentTimeMillis() - start);
-			outputConcurrentHashMap.put(ip, res);
-		});
-		return ResultUtil.success(outputConcurrentHashMap);
-	}
+//	@PostMapping("execute")
+//	public Result<?> execute(String command, String host) {
+//		String[] ipArray = host.split(",");
+//		ConcurrentHashMap<String, Result<?>> outputConcurrentHashMap = new ConcurrentHashMap<>();
+//		Arrays.asList(ipArray).parallelStream().forEach(ip -> {
+//			long start = System.currentTimeMillis();
+//			Result<?> res = NodeManager.send(ip, command);
+//			res.setMs(System.currentTimeMillis() - start);
+//			outputConcurrentHashMap.put(ip, res);
+//		});
+//		return ResultUtil.success(outputConcurrentHashMap);
+//	}
 
-	@GetMapping("getHost")
-	public Result<?> hostList() {
-		List<Host> hosts = hostRepository.findAll();
+//	@GetMapping("getHosts")
+//	public Result<?> getHosts() {
+//		List<HostDto> hostDtos = hostRepository.findAll();
+//        List<Host> hosts = checkLiveAndConvert(hostDtos);
+//		return ResultUtil.success(hosts);
+//	}
 
-		hosts=hosts.parallelStream().map(host -> {
-			System.out.println("NodeChecker " + host);
-			System.out.println("NodeChecker " + host.getIp());
-			Result<?> heartbeatRes = NodeManager.heartbeat(host.getIp(),
-					JSON.toJSONString(MessageUtil.heartbeat()));
-			if (heartbeatRes.isSuccess()) {
-				System.out.println(host.getIp()+" UP   :" + heartbeatRes);
-				host.setStatus(1);
-			} else {
-				System.out.println(host.getIp()+" DOWN : " + heartbeatRes);
-				host.setStatus(0);
-			}
-			return host;
-		}).collect(Collectors.toList());
-		return ResultUtil.success(hosts);
-	}
+//    @GetMapping("getGroups")
+//    public Result<?> getGroups() {
+//        List<GroupDto> groupDtos = groupRepository.findAll();
+//        List<Group> groups = groupDtos.parallelStream().map((GroupDto groupDto) -> {
+//            Group group = Group.fromDto(groupDto);
+//            List<HostDto> hostDtos = groupDto.getHostDtos();
+//            int status = 0;
+//            if (!CollectionUtils.isEmpty(hostDtos)) {
+//                status = 1;
+//                for (HostDto hostDto : hostDtos) {
+//                    Result<?> heartbeatRes = NodeManager.heartbeat(hostDto.getIp(), JSON.toJSONString(MessageUtil.heartbeat()));
+//                    if (!heartbeatRes.isSuccess()) {
+//                        status = 0;
+//                        break;
+//                    }
+//                }
+//            }
+//            group.setStatus(status);
+//            group.setHosts(checkLiveAndConvert(hostDtos));
+//            return group;
+//        }).collect(Collectors.toList());
+//        return ResultUtil.success(groups);
+//    }
+
+//    private List<Host> checkLiveAndConvert(List<HostDto> hostDtos) {
+//        return hostDtos.parallelStream().map(hostDto -> {
+//            Result<?> heartbeatRes = NodeManager.heartbeat(hostDto.getIp(),
+//                    JSON.toJSONString(MessageUtil.heartbeat()));
+//            Host host = Host.fromDto(hostDto);
+//            if (heartbeatRes.isSuccess()) {
+//                host.setStatus(1);
+//            } else {
+//                host.setStatus(0);
+//            }
+//            return host;
+//        }).collect(Collectors.toList());
+//    }
 
 }
