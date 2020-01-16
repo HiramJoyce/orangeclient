@@ -87,37 +87,126 @@
         .el-menu-item.is-active {
             background-color: #152780 !important;
         }
-
+        
         [v-cloak] {
             display: none;
         }
-        #box{
-        	height: calc(100vh - 64px);
+        
+        #box {
+            height: calc(100vh - 64px);
         }
-        *{margin:0;padding:0}
+        
+        * {
+            margin: 0;
+            padding: 0
+        }
+        
+        #designer_canvas {
+            position: relative;
+            background: #F2F2F2;
+            overflow: visible;
+            box-shadow: 3px 3px 6px #888;
+            z-index: 0;
+        }
+        
+        .checkbox {
+            position: absolute;
+            text-align: center;
+            width: 20px;
+            height: 20px;
+            top: 6px;
+            left: 6px;
+        }
+        
+        .node {
+            position: absolute;
+            text-align: center;
+            line-height: 90px;
+            width: 90px;
+            height: 90px;
+            border: 2px solid black;
+            border-radius: 20px;
+        }
+        
+        .node:hover {
+            cursor: move;
+            background-color:aquamarine;
+        }
+        
+        .shape_anchor {
+            position: absolute;
+            border-style: solid;
+            border-width: 1px;
+            background: white;
+            border-color: rgb(136, 51, 51);
+            border-radius: 4px;
+            width: 6px;
+            height: 6px;
+        }
+        
+        .shape_corner {
+            position: absolute;
+            border-style: solid;
+            border-width: 1px;
+            background: white;
+            border-color: rgb(136, 51, 51);
+            width: 6px;
+            height: 6px;
+        }
+        
+        .noselect {
+            -webkit-touch-callout: none;
+            /* iOS Safari */
+            -webkit-user-select: none;
+            /* Chrome/Safari/Opera */
+            -khtml-user-select: none;
+            /* Konqueror */
+            -moz-user-select: none;
+            /* Firefox */
+            -ms-user-select: none;
+            /* Internet Explorer/Edge */
+            user-select: none;
+            /* Non-prefixed version, currently not supported by any browser */
+        }
     </style>
 </head>
 
-<body>
+<body class="noselect">
     <script src="lib/vue/vue.js"></script>
     <script src="lib/element-ui/index.js"></script>
     <script src="js/jquery-2.1.1.min.js"></script>
     <div id="app" v-cloak style="width: 100%;height:100%">
         <div style="width: 100%;height: 100vh;">
-            <el-header style="width: 100%;height: 64px;background-color:#fff">Header</el-header>
+            <el-header style="width: 100%;height: 64px;text-align:center;background-color:#fff">
+                <el-row>
+                    <el-col style="width: 15%">Stream Dashboard</el-col>
+                    <el-col style="width: 85%">
+
+                    </el-col>
+                </el-row>
+            </el-header>
             <el-container id="box" style="width: 100%; ">
                 <el-aside width="15%" style="background-color: #fff;">
                     <span>
                         Aside</span>
                 </el-aside>
                 <el-container style="width: 100%">
-                    <el-main style="width: 100%;height: 100%;background-color: #fff;">
-                        <el-card class="box-card" style="width: 99%;height: 98%; border: 5px double #888;">
-                            Dashboard
-                        </el-card>
+                    <el-main id="box_main" style="width: 100%;height: 100%;background-color: #fff;">
+                        <div id="designer_canvas" @dbclick="box_doubleclick" @mousemove="box_mousemove" class="box-card" style="width: 99%;height: 98%; border: 1px double #888;">
+                            <div v-for="node,id in nodes" @mousedown="node_mousedown(node,node.id)" @mouseup="node_mouseup(node,node.id)" @mouseout="node_mouseout(node,node.id)" @mouseover="node_mouseover(node,node.id)" @click="node_click(node,node.id)"
+                                :style="{top:node.y+'px',left:node.x+'px','background-color':(node.selected? 'aquamarine' : 'lightblue')}" :id="id" :key=id+node.name class="node">
+                                {{node.name}}
+                                <div v-for="anchor,idx in node.anchor" :style="{top:anchor.y+'px',left:anchor.x+'px'}" class="shape_anchor">
+                                </div>
+                                <div v-for="corner,idx in node.corner" :style="{top:corner.y+'px',left:corner.x+'px'}" class="shape_corner">
+                                </div>
+                            </div>
+                            <el-button @click="delete_nodes" style="position: absolute;top:2px;right:2px;" icon="el-icon-delete" circle></el-button>
+                            <el-button @click="add_node" style="position: absolute;top:2px;right:45px;" icon="el-icon-plus" circle></el-button>
+                            <el-button type="success" style="position: absolute;top:2px;right:88px;" icon="el-icon-caret-right" circle></el-button>
+                        </div>
                     </el-main>
                 </el-container>
-            </el-container>
             </el-container>
         </div>
     </div>
@@ -144,7 +233,7 @@
         var vm = new Vue({
             el: "#app",
             data: {
-                message: "Hello Orange Shell Manager123",
+                message: "Hello Orange Shell Manager",
                 info: '',
                 output: '',
                 host: '',
@@ -152,23 +241,186 @@
                     "code": 1001,
                     "cmds": ["hostname"]
                 },
-                nodes: [],
-                select_nodes: []
+                nodes: [{
+                    name: 'start',
+                    type: 'root',
+                    parent: null,
+                    id: 11,
+                    text: 'Start',
+                    status: 'idle',
+                    shell: 'ls',
+                    x: 100,
+                    y: 100,
+                    anchor: []
+                }, {
+                    name: 'start',
+                    type: 'root',
+                    parent: null,
+                    id: 12,
+                    text: 'Start',
+                    status: 'idle',
+                    shell: 'ls',
+                    x: 100,
+                    y: 500,
+                    anchor: []
+                }, {
+                    name: 'start',
+                    type: 'root',
+                    parent: null,
+                    id: 13,
+                    text: 'Start',
+                    status: 'idle',
+                    shell: 'ls',
+                    x: 100,
+                    y: 300,
+                    anchor: []
+                }, {
+                    name: 'start',
+                    type: 'root',
+                    parent: null,
+                    id: 14,
+                    text: 'Start',
+                    status: 'idle',
+                    shell: 'ls',
+                    x: 300,
+                    y: 300,
+                    anchor: []
+                }, {
+                    name: 'start',
+                    type: 'root',
+                    parent: null,
+                    id: 1,
+                    text: 'Start',
+                    status: 'idle',
+                    shell: 'ls',
+                    x: 500,
+                    y: 300,
+                    anchor: []
+                }, {
+                    name: 'start',
+                    type: 'root',
+                    parent: null,
+                    id: 15,
+                    text: 'Start',
+                    status: 'idle',
+                    shell: 'ls',
+                    x: 700,
+                    y: 300,
+                    anchor: [],
+                    corner: []
+                }],
+                select_nodes: {},
+                mousedown: false
             },
             mounted() {
-                $.ajax({
-                    type: 'GET',
-                    url: '/api/getHost',
-                    success: function(res) {
-                        vm.nodes = res.data
-                    },
-                    complete: function() {
-                        window.parent.vm.loading = false
-                    },
-                    dataType: "json"
-                });
+                window.parent.vm.loading = false
+                    // $.ajax({
+                    //     type: 'GET',
+                    //     url: '/api/getHost',
+                    //     success: function(res) {
+                    //         vm.nodes = res.data
+                    //     },
+                    //     complete: function() {
+                    //         window.parent.vm.loading = false
+                    //     },
+                    //     dataType: "json"
+                    // });
+                    // for (var n in this.nodes) {
+                    //     this.nodes[n].x += (this.nodes[n].layer + 1) * 200
+                    // }
+                    // console.log(this.nodes)
             },
+            created() {},
             methods: {
+                delete_nodes: function() {
+                    vm.select_nodes = {}
+                    vm.nodes = []
+                },
+                gen_node_id: function() {
+                    return Math.ceil(Math.random() * 10000000000000)
+                },
+                add_node: function() {
+                    var new_id = vm.gen_node_id()
+                    var new_node = {
+                        name: 'New',
+                        type: 'init',
+                        parent: null,
+                        id: new_id,
+                        text: 'Add a text',
+                        status: 'idle',
+                        shell: 'ls',
+                        x: $("#box_main").width() - 300,
+                        y: 100,
+                        anchor: []
+                    }
+                    vm.nodes.push(new_node)
+                },
+                box_doubleclick: function(node, id) {
+                    alert(0)
+                },
+                node_mousedown: function(node, id) {
+                    vm.mousedown = true
+                },
+                node_mouseup: function(node, id) {
+                    vm.mousedown = false
+                },
+                box_mousemove: function(event, node, id) {
+                    if (JSON.stringify(vm.select_nodes) != '{}' && vm.mousedown) {
+                        for (var n in vm.select_nodes) {
+                            console.log(event.offsetX)
+                            console.log(event.offsetY)
+                            vm.select_nodes[n].x += event.movementX
+                            vm.select_nodes[n].y += event.movementY
+                        }
+                    }
+                },
+                node_mouseout: function(node, id) {
+                    node.anchor = []
+                },
+                box_mouseout: function() {
+                    vm.mousedown = false
+                    vm.select_nodes = {}
+                },
+                node_mouseover: function(node, id) {
+                    node.anchor = [{
+                        x: 0 - 4,
+                        y: 45 - 4,
+                    }, {
+                        x: 90 + 0 - 4,
+                        y: 45 - 4,
+                    }, {
+                        x: 45 - 4,
+                        y: 0 - 4,
+                    }, {
+                        x: 45 - 4,
+                        y: 90 + 0 - 4,
+                    }]
+                },
+                node_click: function(node, id) {
+                    console.log(node, id)
+                    console.log(vm.select_nodes[id])
+                    if (vm.select_nodes[id]) {
+                        delete vm.select_nodes[id]
+                        node.selected = false
+                        node.corner = []
+                    } else {
+                        vm.select_nodes[id] = node
+                        node.selected = true
+                        node.corner = [{
+                            x: 0 - 4,
+                            y: 0 - 4,
+                        }, {
+                            x: 0 - 4,
+                            y: 90 + 0 - 4,
+                        }, {
+                            x: 90 + 0 - 4,
+                            y: 0 - 4,
+                        }, {
+                            x: 90 + 0 - 4,
+                            y: 90 + 0 - 4,
+                        }]
+                    }
+                },
                 add: function(index) {
                     vm.post_data.cmds.splice(index, 0, [''])
                 },
