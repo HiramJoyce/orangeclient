@@ -18,54 +18,6 @@
             border: none;
         }
         
-        .ball-pulse {
-            transform: scale(1);
-        }
-        
-        .ball-pulse>div:nth-child(1) {
-            -webkit-animation: ball-pulse-scale 0.75s -0.24s infinite cubic-bezier(0.2, 0.68, 0.18, 1.08);
-            animation: ball-pulse-scale 0.75s -0.24s infinite cubic-bezier(0.2, 0.68, 0.18, 1.08);
-        }
-        
-        .ball-pulse>div:nth-child(2) {
-            -webkit-animation: ball-pulse-scale 0.75s -0.12s infinite cubic-bezier(0.2, 0.68, 0.18, 1.08);
-            animation: ball-pulse-scale 0.75s -0.12s infinite cubic-bezier(0.2, 0.68, 0.18, 1.08);
-        }
-        
-        .ball-pulse>div:nth-child(3) {
-            -webkit-animation: ball-pulse-scale 0.75s 0s infinite cubic-bezier(0.2, 0.68, 0.18, 1.08);
-            animation: ball-pulse-scale 0.75s 0s infinite cubic-bezier(0.2, 0.68, 0.18, 1.08);
-        }
-        
-        .ball-pulse>div {
-            background-color: rgb(30, 55, 153);
-            width: 15px;
-            height: 15px;
-            border-radius: 100%;
-            margin: 2px;
-            -webkit-animation-fill-mode: both;
-            animation-fill-mode: both;
-            display: inline-block;
-        }
-        
-        @keyframes ball-pulse-scale {
-            0% {
-                -webkit-transform: scale(1);
-                transform: scale(1);
-                opacity: 1;
-            }
-            45% {
-                -webkit-transform: scale(0.1);
-                transform: scale(0.1);
-                opacity: 0.7;
-            }
-            80% {
-                -webkit-transform: scale(1);
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
-        
         .el-header {
             background-color: #B3C0D1;
             color: #333;
@@ -130,7 +82,11 @@
         
         .node:hover {
             cursor: move;
-            background-color:aquamarine;
+            background-color: aquamarine;
+        }
+        
+        .node-switch {
+            position: absolute;
         }
         
         .shape_anchor {
@@ -168,6 +124,25 @@
             user-select: none;
             /* Non-prefixed version, currently not supported by any browser */
         }
+        
+        .running-border {
+            animation: glow 800ms ease-out infinite alternate;
+        }
+        
+        @keyframes glow {
+            0% {
+                border-color: rgb(3, 75, 3);
+                box-shadow: 0 0 5px rgba(0, 255, 0, .2), inset 0 0 5px rgba(0, 255, 0, .1), 0 1px 0 #393;
+            }
+            100% {
+                border-color: #6f6;
+                box-shadow: 0 0 25px rgba(0, 255, 0, .6), inset 0 0 10px rgba(0, 255, 0, .4), 0 1px 0 #6f6;
+            }
+        }
+        
+        span {
+            border: none;
+        }
     </style>
 </head>
 
@@ -175,13 +150,12 @@
     <script src="lib/vue/vue.js"></script>
     <script src="lib/element-ui/index.js"></script>
     <script src="js/jquery-2.1.1.min.js"></script>
-    <div id="app" v-cloak style="width: 100%;height:100%">
+    <div id="app" v-cloak style="width: 100%;height:100%" @mouseup="node_mouseup()" @mousemove="box_mousemove">
         <div style="width: 100%;height: 100vh;">
             <el-header style="width: 100%;height: 64px;text-align:center;background-color:#fff">
                 <el-row>
                     <el-col style="width: 15%">Stream Dashboard</el-col>
                     <el-col style="width: 85%">
-
                     </el-col>
                 </el-row>
             </el-header>
@@ -192,23 +166,31 @@
                 </el-aside>
                 <el-container style="width: 100%">
                     <el-main id="box_main" style="width: 100%;height: 100%;background-color: #fff;">
-                        <div id="designer_canvas" @dbclick="box_doubleclick" @mousemove="box_mousemove" class="box-card" style="width: 99%;height: 98%; border: 1px double #888;">
-                            <div v-for="node,id in nodes" @mousedown="node_mousedown(node,node.id)" @mouseup="node_mouseup(node,node.id)" @mouseout="node_mouseout(node,node.id)" @mouseover="node_mouseover(node,node.id)" @click="node_click(node,node.id)"
-                                :style="{top:node.y+'px',left:node.x+'px','background-color':(node.selected? 'aquamarine' : 'lightblue')}" :id="id" :key=id+node.name class="node">
+                        <div name='box' id="designer_canvas" @click="box_click()" class="box-card" style="width: 99%;height: 98%; border: 1px double #888;">
+                            <div name='node' v-for="node,id in nodes" :key=id+node.name @mousedown="node_mousedown(node,node.id)" @mouseout="node_mouseout(node,node.id)" @mouseover="node_mouseover(node,node.id)" :style="{top:node.y+'px',left:node.x+'px','background-color':(node.selected? 'aquamarine' : 'lightblue')}"
+                                :id="id" class="node">
                                 {{node.name}}
+                                <br>
                                 <div v-for="anchor,idx in node.anchor" :style="{top:anchor.y+'px',left:anchor.x+'px'}" class="shape_anchor">
                                 </div>
                                 <div v-for="corner,idx in node.corner" :style="{top:corner.y+'px',left:corner.x+'px'}" class="shape_corner">
                                 </div>
                             </div>
+                            <el-switch v-for="node,id in nodes" :key=id v-model="node.executable" style="line-height: 10px;position: absolute;top:100px;left: 30px;" active-color="#13ce66" inactive-color="#777" class="node-switch" :style="{top:(node.y+60)+'px',left:(node.x+27)+'px'}">
+                            </el-switch>
                             <el-button @click="delete_nodes" style="position: absolute;top:2px;right:2px;" icon="el-icon-delete" circle></el-button>
                             <el-button @click="add_node" style="position: absolute;top:2px;right:45px;" icon="el-icon-plus" circle></el-button>
-                            <el-button type="success" style="position: absolute;top:2px;right:88px;" icon="el-icon-caret-right" circle></el-button>
+                            <el-button @click="edit_node" type="primary" style="position: absolute;top:2px;right:88px;" icon="el-icon-edit" circle></el-button>
+                            <el-button type="success" style="position: absolute;top:2px;right:131px;" icon="el-icon-caret-right" circle></el-button>
                         </div>
                     </el-main>
                 </el-container>
             </el-container>
         </div>
+        <!-- :before-close="handleClose" -->
+        <el-drawer title="Node control card" :visible.sync="drawer" :direction="direction">
+            <span>我来啦!</span> {{select_nodes}}
+        </el-drawer>
     </div>
     <script>
         function dateFtt(fmt, date) {
@@ -237,6 +219,9 @@
                 info: '',
                 output: '',
                 host: '',
+                drawer: false,
+                drawer_node: null,
+                direction: 'rtl',
                 post_data: {
                     "code": 1001,
                     "cmds": ["hostname"]
@@ -251,7 +236,8 @@
                     shell: 'ls',
                     x: 100,
                     y: 100,
-                    anchor: []
+                    anchor: [],
+                    corner: []
                 }, {
                     name: 'start',
                     type: 'root',
@@ -262,7 +248,8 @@
                     shell: 'ls',
                     x: 100,
                     y: 500,
-                    anchor: []
+                    anchor: [],
+                    corner: []
                 }, {
                     name: 'start',
                     type: 'root',
@@ -273,7 +260,8 @@
                     shell: 'ls',
                     x: 100,
                     y: 300,
-                    anchor: []
+                    anchor: [],
+                    corner: []
                 }, {
                     name: 'start',
                     type: 'root',
@@ -284,7 +272,8 @@
                     shell: 'ls',
                     x: 300,
                     y: 300,
-                    anchor: []
+                    anchor: [],
+                    corner: []
                 }, {
                     name: 'start',
                     type: 'root',
@@ -295,7 +284,8 @@
                     shell: 'ls',
                     x: 500,
                     y: 300,
-                    anchor: []
+                    anchor: [],
+                    corner: []
                 }, {
                     name: 'start',
                     type: 'root',
@@ -360,50 +350,16 @@
                 },
                 node_mousedown: function(node, id) {
                     vm.mousedown = true
-                },
-                node_mouseup: function(node, id) {
-                    vm.mousedown = false
-                },
-                box_mousemove: function(event, node, id) {
-                    if (JSON.stringify(vm.select_nodes) != '{}' && vm.mousedown) {
-                        for (var n in vm.select_nodes) {
-                            console.log(event.offsetX)
-                            console.log(event.offsetY)
-                            vm.select_nodes[n].x += event.movementX
-                            vm.select_nodes[n].y += event.movementY
+                    for (var id1 in vm.select_nodes) {
+                        if (node != vm.select_nodes[id1]) {
+                            this.$set(vm.select_nodes[id1], 'selected', false)
+                            vm.select_nodes[id1].anchor = []
+                            vm.select_nodes[id1].corner = []
+                            delete vm.select_nodes[id1]
                         }
                     }
-                },
-                node_mouseout: function(node, id) {
-                    node.anchor = []
-                },
-                box_mouseout: function() {
-                    vm.mousedown = false
-                    vm.select_nodes = {}
-                },
-                node_mouseover: function(node, id) {
-                    node.anchor = [{
-                        x: 0 - 4,
-                        y: 45 - 4,
-                    }, {
-                        x: 90 + 0 - 4,
-                        y: 45 - 4,
-                    }, {
-                        x: 45 - 4,
-                        y: 0 - 4,
-                    }, {
-                        x: 45 - 4,
-                        y: 90 + 0 - 4,
-                    }]
-                },
-                node_click: function(node, id) {
-                    console.log(node, id)
-                    console.log(vm.select_nodes[id])
-                    if (vm.select_nodes[id]) {
-                        delete vm.select_nodes[id]
-                        node.selected = false
-                        node.corner = []
-                    } else {
+
+                    if (!vm.select_nodes[id]) {
                         vm.select_nodes[id] = node
                         node.selected = true
                         node.corner = [{
@@ -419,7 +375,85 @@
                             x: 90 + 0 - 4,
                             y: 90 + 0 - 4,
                         }]
+                        node.anchor = [{
+                            x: 0 - 4,
+                            y: 45 - 4,
+                        }, {
+                            x: 90 + 0 - 4,
+                            y: 45 - 4,
+                        }, {
+                            x: 45 - 4,
+                            y: 0 - 4,
+                        }, {
+                            x: 45 - 4,
+                            y: 90 + 0 - 4,
+                        }]
                     }
+                },
+                node_mouseup: function() {
+                    vm.mousedown = false
+                },
+                box_mousemove: function(event, node, id) {
+                    if (JSON.stringify(vm.select_nodes) != '{}' && vm.mousedown) {
+                        for (var n in vm.select_nodes) {
+                            // console.log(event.offsetX)
+                            // console.log(event.offsetY)
+                            vm.select_nodes[n].x += event.movementX
+                            vm.select_nodes[n].y += event.movementY
+                        }
+                    }
+                },
+                node_mouseout: function(node, id) {
+                    if (node.selected) {
+                        // pass
+                    } else {
+                        node.anchor = []
+                    }
+                },
+                box_mouseout: function() {
+                    vm.mousedown = false
+                    vm.select_nodes = {}
+                },
+                node_mouseover: function(node, id) {
+                    if (node.selected) {
+                        // pass
+                    } else {
+                        node.anchor = [{
+                            x: 0 - 4,
+                            y: 45 - 4,
+                        }, {
+                            x: 90 + 0 - 4,
+                            y: 45 - 4,
+                        }, {
+                            x: 45 - 4,
+                            y: 0 - 4,
+                        }, {
+                            x: 45 - 4,
+                            y: 90 + 0 - 4,
+                        }]
+                    }
+                },
+                box_click: function() {
+                    console.log($(event.target))
+                    console.log($(event.target).prop('name'))
+                    if ($(event.target).prop('id') == 'designer_canvas') {
+                        for (var id in vm.select_nodes) {
+                            console.log(id)
+                            this.$set(vm.select_nodes[id], 'selected', false)
+                            vm.select_nodes[id].corner = []
+                            vm.select_nodes[id].anchor = []
+                            delete vm.select_nodes[id]
+                        }
+                    } else {
+                        // $(event.target).removeClass('running-border')
+                        // $(event.target).addClass('running-border')
+                    }
+                },
+                node_click: function(node, id) {
+                    // vm.drawer = true
+                },
+                edit_node: function() {
+                    vm.drawer = true
                 },
                 add: function(index) {
                     vm.post_data.cmds.splice(index, 0, [''])
